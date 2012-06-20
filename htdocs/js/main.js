@@ -15,8 +15,4 @@ $(document).ready(function() {
 		tableid:'4329179',
 		geo:'geometry'
 	});
-//	CityBikeRoutes = new google.maps.FusionTablesLayer('4329179', {
-//		query : "SELECT geometry FROM 4329179"
-//	});
-//	CityBikeRoutes.setMap(Map.Map);
 });
