@@ -10,6 +10,7 @@
 	
 	<!-- Le styles -->
 	<link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 	<style type="text/css">
 		body {
 			padding-top: 20px;
@@ -29,19 +30,40 @@
 </head>
 <body>
 	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span4">
-				<h1>Velociped.es</h1>
-				<b>Get around town.</b>
-			</div>
-			<div class="span8">
-				<div style="display:inline-block; position:relative; width:100%;">
-					<div style="margin-top:75%;">
-						<div id="map" style="position:absolute; top:0; bottom:0; left:0;right:0;"></div>
+	<div class="row-fluid">
+		<div class="span4">
+			<h1>Velociped.es</h1>
+			<p><b>Bicycling directions</b> for your next ride.</p>
+			<div class="well">
+				<div class="row-fluid">
+					<div class="span12">
+						<span class="help-block">Chicago addresses or locations only.</span>
+						<div class="control-group">
+						<label class="control-label" for="origin"><b>From</b></label>
+							<div class="controls">
+								<div class="input-append">
+									<input id="origin" type="text" class="span9" placeholder="123 W Street Name">
+									<button id="gps" class="btn btn-info" type="button">GPS</button>
+								</div>
+							</div>
+						</div>
+						<label for="destination"><b>To</b>
+							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
+						</label>
+						<button id="route" class="btn btn-success">Route</button>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="span8">
+			<input id="maplock" type="checkbox"> Enable pan/zoom
+			<div style="display:inline-block; position:relative; width:100%;">
+				<div style="margin-top:75%;">
+					<div id="map" style="position:absolute; top:0; bottom:0; left:0;right:0;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 	</div>
 	<!-- Le javascript ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->

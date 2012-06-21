@@ -11,6 +11,7 @@ function TkMap(Args)
 	// Default Private Properties
 	var MapOptions = {
 			center : new google.maps.LatLng(Lat,Lng),
+			draggable : false,
 			mapTypeControl : false,
 			mapTypeId : google.maps.MapTypeId.ROADMAP,
 			panControl : false,
@@ -48,6 +49,13 @@ function TkMap(Args)
 		{
 			MapOptions.zoom++;
 		}
+	};
+	this.setLock = function(lockBoolean)
+	{
+		this.Map.setOptions({
+			draggable : lockBoolean,
+			zoomControl : lockBoolean
+		});
 	};
 	this.setCustomStyles = function(options)
 	{
