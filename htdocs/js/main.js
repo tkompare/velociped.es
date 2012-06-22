@@ -50,8 +50,6 @@ $(document).ready(function() {
 	if($(window).width() > 767)
 	{
 		$('#maplock').prop('checked', true);
-		if ($("#maplock").is(':checked')) {
-			Map.setLock(true);
-		}
+		Map.setLock(true);
 	};
 });
