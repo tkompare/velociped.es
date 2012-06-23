@@ -34,6 +34,7 @@
 		<div class="span4">
 			<h1>Velociped.es</h1>
 			<p><b>Bicycling directions</b> for your next ride.</p>
+			<p>CAUTION: Development Draft</p>
 			<div class="well">
 				<div class="row-fluid">
 					<div class="span12">
@@ -51,11 +52,16 @@
 							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
 						</label>
 						<button id="route" class="btn btn-success">Route</button>
+						<button id="show-directions" class="btn hide"><span id="directions-text">Show Directions</span></button>
 					</div>
 				</div>
 			</div>
-			<div>
-				<h1>CAUTION: Develpment</h1>
+			<div id="alert-gpsfail" class="alert alert-error hide">
+				<button class="close" data-dismiss="alert">×</button>
+				<strong>Notice:</strong> <span id="gpsfail">GPS locating failed</span>
+			</div>
+			<div id="alert-directions" class="alert alert-success hide">
+				<span id="directions"></span>
 			</div>
 		</div>
 		<div class="span8">
@@ -71,7 +77,7 @@
 	<!-- Le javascript ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/infobox.min.js"></script>
 	<script src="js/xdate.js"></script>

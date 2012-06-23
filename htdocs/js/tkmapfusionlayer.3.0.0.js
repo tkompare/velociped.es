@@ -37,6 +37,7 @@ function TkMapFusionLayer(Args)
 		if (showIcon !== null)
 		{
 			this.Layer = new google.maps.FusionTablesLayer({
+				clickable : false,
 				query: Query,
 				styles: [{
 					markerOptions: { iconName: showIcon }
@@ -46,6 +47,7 @@ function TkMapFusionLayer(Args)
 		else
 		{
 			this.Layer = new google.maps.FusionTablesLayer({
+				clickable : false,
 				query: Query
 			});
 		}
