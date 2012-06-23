@@ -56,18 +56,18 @@ $(document).ready(function() {
 				}
 				var miles = distance / 1609.344;
 				miles = Math.round(miles*100)/100;
-				$('#directions').append(miles+' miles, apporoximately');
+				$('#directions').append(miles+' miles, approximately');
 				if($(window).width() < 769)
 				{
-					$('#directions-text').text('Show Directions');
+					$('#show-directions').text('Show Directions');
 					$('#show-directions').removeClass('hide');
 					$('#alert-directions').addClass('hide');
 				}
 				else
 				{
-					$('#directions-text').text('Hide Directions');
-					$('#alert-directions').removeClass('hide');
+					$('#show-directions').text('Hide Directions');
 					$('#show-directions').removeClass('hide');
+					$('#alert-directions').removeClass('hide');
 				}
 			}
 		});
