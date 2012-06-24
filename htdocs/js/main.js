@@ -32,9 +32,28 @@ $(document).ready(function() {
 	$('#route').click(function(){
 		var origin = $('#origin').val() + ' Chicago, IL';
 		var destination = $('#destination').val() + ' Chicago, IL';
+		var waypts = [];
+		if($('#stop1').val() != '')
+		{
+			waypts.push({
+				location : $('#stop1').val() + ' Chicago, IL',
+				stopover : true
+			});
+		}
+		
+		if($('#stop2').val() != '')
+		{
+			waypts.push({
+				location : $('#stop2').val() + ' Chicago, IL',
+				stopover : true
+			});
+		}
+		
 		var request = {
 			origin : origin,
 			destination : destination,
+			waypoints : waypts,
+      optimizeWaypoints : true,
 			// Note that Javascript allows us to access the constant
 			// using square brackets and a string value as its
 			// "property."
@@ -47,16 +66,20 @@ $(document).ready(function() {
 				$('#directions').text('');
 				var distance = 0;
 				$('#directions').append('<br>'+response.routes[0].copyrights+'<br>');
-				for(var x in response.routes[0].legs[0].steps)
+				for (var leg in response.routes[0].legs)
 				{
-					var thisstep = x;
-					thisstep++;
-					$('#directions').append(thisstep +'. '+response.routes[0].legs[0].steps[x].instructions+'<br>');
-					distance = distance + response.routes[0].legs[0].steps[x].distance.value;
+					for(var x in response.routes[0].legs[leg].steps)
+					{
+						var thisstep = x;
+						thisstep++;
+						$('#directions').append(thisstep +'. '+response.routes[0].legs[leg].steps[x].instructions+'<br>');
+						distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
+					}
+					$('#directions').append('<br>');
 				}
 				var miles = distance / 1609.344;
 				miles = Math.round(miles*100)/100;
-				$('#directions').append(miles+' miles, approximately');
+				$('#directions').append(miles+' total miles.');
 				if($(window).width() < 769)
 				{
 					$('#show-directions').text('Show Directions');
@@ -84,6 +107,27 @@ $(document).ready(function() {
 			$('#show-directions').text('Show Directions');
 			$('#alert-directions').addClass('hide');
 		}
+	});
+	// More button listener
+	$('#btn-more').click(function(){
+		if($('#div-more').hasClass('hide'))
+		{
+			$('#btn-more').text('Less');
+			$('#div-more').removeClass('hide');
+		}
+		else
+		{
+			$('#btn-more').text('More');
+			$('#div-more').addClass('hide');
+		}
+	});
+	// Stop1 clear button
+	$('#btn-stop1').click(function(){
+		$('#stop1').val('');
+	});
+//Stop1 clear button
+	$('#btn-stop2').click(function(){
+		$('#stop2').val('');
 	});
 	// Window size check
 	if($(window).width() > 767)
@@ -131,6 +175,7 @@ $(document).ready(function() {
 			$('#alert-gpsfail').removeClass('hide');
 		}
 	}
+	// The Geocoder function
 	function codeLatLng(latlng) {
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode(
