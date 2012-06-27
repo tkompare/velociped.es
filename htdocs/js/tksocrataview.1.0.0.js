@@ -40,7 +40,7 @@ function TkSocrataView(Args)
 	//Constructor (sort of...)
 	if (ViewId !== null || Domain !== null)
 	{
-		SocrataUrl = 'http://'+Domain+'/api/views/'+ViewId+'/rows.json?jsonp=?';;
+		SocrataUrl = 'http://'+Domain+'/api/views/'+ViewId+'/rows.json?jsonp=?';
 		$.get(SocrataUrl, dataHandler, 'jsonp');
 	};
 	this.getData = function()

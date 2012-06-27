@@ -8,8 +8,12 @@ $(document).ready(function() {
 		domid:'map',
 		init:true
 	});
+	
 	// Add Bike Routing renderer
-	var directionsDisplay = new google.maps.DirectionsRenderer();
+	var rendererOptions = {
+		draggable: true
+	};
+	var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 	directionsDisplay.setMap(Map.Map);
 	// Add Google Bicycle Layer
 	var GoogleBikeLayer = new google.maps.BicyclingLayer();
@@ -36,7 +40,7 @@ $(document).ready(function() {
 		if($('#stop1').val() != '')
 		{
 			waypts.push({
-				location : $('#stop1').val() + ' Chicago, IL',
+				location : $('#stop1').val() + ', Chicago, IL',
 				stopover : true
 			});
 		}
@@ -44,7 +48,7 @@ $(document).ready(function() {
 		if($('#stop2').val() != '')
 		{
 			waypts.push({
-				location : $('#stop2').val() + ' Chicago, IL',
+				location : $('#stop2').val() + ', Chicago, IL',
 				stopover : true
 			});
 		}
@@ -53,7 +57,7 @@ $(document).ready(function() {
 			origin : origin,
 			destination : destination,
 			waypoints : waypts,
-      optimizeWaypoints : true,
+			optimizeWaypoints : true,
 			// Note that Javascript allows us to access the constant
 			// using square brackets and a string value as its
 			// "property."
@@ -62,39 +66,72 @@ $(document).ready(function() {
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
 				directionsDisplay.setDirections(response);
-				// Text for Routing here.
-				$('#directions').text('');
-				var distance = 0;
-				$('#directions').append('<br>'+response.routes[0].copyrights+'<br>');
-				for (var leg in response.routes[0].legs)
-				{
-					for(var x in response.routes[0].legs[leg].steps)
-					{
-						var thisstep = x;
-						thisstep++;
-						$('#directions').append(thisstep +'. '+response.routes[0].legs[leg].steps[x].instructions+'<br>');
-						distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
-					}
-					$('#directions').append('<br>');
-				}
-				var miles = distance / 1609.344;
-				miles = Math.round(miles*100)/100;
-				$('#directions').append(miles+' total miles.');
-				if($(window).width() < 769)
-				{
-					$('#show-directions').text('Show Directions');
-					$('#show-directions').removeClass('hide');
-					$('#alert-directions').addClass('hide');
-				}
-				else
-				{
-					$('#show-directions').text('Hide Directions');
-					$('#show-directions').removeClass('hide');
-					$('#alert-directions').removeClass('hide');
-				}
+				//setDirectionsText(response);
 			}
 		});
 	});
+	// Set the directions text
+	function setDirectionsText(response)
+	{
+		$('#directions').text('');
+		var lastwaypt = null;
+		// Text for Routing here.
+		$('#directions').text('');
+		var distance = 0;
+		$('#directions').append('<br>'+response.routes[0].copyrights+'<br>');
+		var legcount = response.routes[0].legs.length;
+		console.log('legcount = '+legcount);
+		var l = 0;
+		for (var leg in response.routes[0].legs)
+		{
+			l++;
+			var stepcount = response.routes[0].legs[leg].steps.length;
+			console.log('stepcount = '+stepcount);
+			var s = 0;
+			for(var x in response.routes[0].legs[leg].steps)
+			{
+				s++;
+				var thisstep = x;
+				thisstep++;
+				var stepmiles = response.routes[0].legs[leg].steps[x].distance.value /1609.334;
+				stepmiles = Math.round(stepmiles*100)/100;
+				$('#directions').append(thisstep +'. '+response.routes[0].legs[leg].steps[x].instructions+' - '+stepmiles+' miles<br>');
+				distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
+				if(l == legcount && s == stepcount)
+				{
+					lastwaypt = response.routes[0].legs[leg].steps[x].end_location;
+					//Map.Map.setCenter(lastwaypt);
+					var lastlat = lastwaypt.lat();
+					var lastlng = lastwaypt.lng();
+					var BikeRackLayer = new TkSocrataView({
+						viewid : 'cbyb-69xx',
+						domain : 'data.cityofchicago.org',
+					});
+				}
+			}
+			$('#directions').append('<br>');
+		}
+		var miles = distance / 1609.344;
+		miles = Math.round(miles*100)/100;
+		$('#directions').append(miles+' total miles.');
+		if($(window).width() < 769)
+		{
+			$('#show-directions').text('Show Directions');
+			$('#show-directions').removeClass('hide');
+			$('#alert-directions').addClass('hide');
+		}
+		else
+		{
+			$('#show-directions').text('Hide Directions');
+			$('#show-directions').removeClass('hide');
+			$('#alert-directions').removeClass('hide');
+		}
+	}
+	// Directions Change listener
+	google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+		setDirectionsText(directionsDisplay.directions);
+	});
+
 	// Show Directions listener
 	$('#show-directions').click(function(){
 		if($('#alert-directions').hasClass('hide'))
@@ -134,7 +171,12 @@ $(document).ready(function() {
 	{
 		$('#maplock').prop('checked', true);
 		Map.setLock(true);
-	};
+	}
+	else
+	{
+		$('#maplock').prop('checked', false);
+		Map.setLock(false);
+	}
 	// Geolocation
 	$('#gps').click(function(){
 		if(navigator.geolocation)
