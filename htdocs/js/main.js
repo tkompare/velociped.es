@@ -117,7 +117,7 @@ $(document).ready(function() {
 				stepmiles = Math.round(stepmiles*100)/100;
 				distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
 				allsteps[totalsteps] = new Object();
-				allsteps[totalsteps].text = totalsteps+'. '+response.routes[0].legs[leg].steps[x].instructions+', and go '+stepmiles+' miles';
+				allsteps[totalsteps].text = (totalsteps+1)+'. '+response.routes[0].legs[leg].steps[x].instructions+', and go '+stepmiles+' miles';
 				allsteps[totalsteps].latlng = response.routes[0].legs[leg].steps[x].start_location;
 				if(l == legcount && s == stepcount)
 				{
@@ -161,7 +161,7 @@ $(document).ready(function() {
 		thisStep = 0;
 		Map.Map.setCenter(allsteps[thisStep].latlng);
 		Map.Map.setOptions({
-			zoom : 18
+			zoom : 17
 		});
 		$('#directions-text').html(allsteps[thisStep].text);
 	});
@@ -171,7 +171,7 @@ $(document).ready(function() {
 			thisStep--;
 			Map.Map.setCenter(allsteps[thisStep].latlng);
 			Map.Map.setOptions({
-				zoom : 18
+				zoom : 17
 			});
 		}
 		$('#directions-text').html(allsteps[thisStep].text);
@@ -191,7 +191,7 @@ $(document).ready(function() {
 		thisStep = allsteps.length - 1;
 		Map.Map.setCenter(allsteps[thisStep].latlng);
 		Map.Map.setOptions({
-			zoom : 18
+			zoom : 17
 		});
 		$('#directions-text').html(allsteps[thisStep].text);
 	});
