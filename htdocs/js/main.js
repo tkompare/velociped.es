@@ -16,6 +16,7 @@ $(document).ready(function() {
 		rendererOptions = {};
 		Map.setMapOptions({
 			disableDoubleClickZoom : true,
+			scrollwheel : false,
 			zoomControlOptions : {
 				style : google.maps.ZoomControlStyle.SMALL,
 				position : google.maps.ControlPosition.LEFT_TOP

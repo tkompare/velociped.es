@@ -52,9 +52,13 @@ function TkMap(Args)
 	};
 	this.setLock = function(lockBoolean)
 	{
+		var dblclick;
+		if(lockBoolean){dblclick = false;}else{dblclick = true;}
 		this.Map.setOptions({
 			draggable : lockBoolean,
-			zoomControl : lockBoolean
+			zoomControl : lockBoolean,
+			disableDoubleClickZoom : dblclick,
+			scrollwheel : lockBoolean
 		});
 	};
 	this.setCustomStyles = function(options)
