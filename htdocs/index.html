@@ -15,7 +15,13 @@
 	<style type="text/css">
 		body {
 			padding-top: 0px;
-			padding-bottom: 20px;
+			padding-bottom: 0px;
+			padding-left: 0px;
+			padding-right: 0px;
+		}
+		.padded {
+			padding-left: 10px;
+			padding-right: 10px;
 		}
 		#map img {
 			max-width: none;
@@ -32,7 +38,7 @@
 <body>
 	<div class="container-fluid">
 	<div class="row-fluid">
-		<div class="span4">
+		<div class="span4 padded">
 			<div class="row-fluid page-header">
 				<div class="span2">
 					<img src="img/veolcipedes-72.png" alt="Velociped.es" style="width:36px;height:36px; padding:4px;"/>
@@ -98,16 +104,16 @@
 			</div>
 		</div>
 		<div class="span8">
-			<input id="maplock" type="checkbox"> Enable pan/zoom
+			<div class="padded"><input id="maplock" type="checkbox"> Enable pan/zoom</div>
 			<div style="display:inline-block; position:relative; width:100%;">
-				<div style="margin-top:75%;">
+				<div style="margin-top:80%;">
 					<div id="map" style="position:absolute; top:0; bottom:0; left:0;right:0;"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row-fluid">
-			<div class="span12">
+			<div class="span12 padded">
 			<hr />
 			<footer>
 				<p>&copy;2012 <a href="http://twitter.com/tomkompare">Tom Kompare</a><br>
@@ -123,8 +129,10 @@
 	<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/tksocrataview.1.0.0.js"></script>
-	<script src="js/main.js"></script>
 	<script src="js/tkmap.3.0.0.js"></script>
 	<script src="js/tkmapfusionlayer.3.0.0.js"></script>
+	<script src="js/touchtest.min.js"></script>
+	<script src="js/main.js"></script>
+	
 </body>
 </html>

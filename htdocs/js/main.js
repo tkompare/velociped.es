@@ -6,13 +6,30 @@ $(document).ready(function() {
 		lat:42.01048,
 		lng:-87.6652,
 		domid:'map',
-		init:true
+		init:false
 	});
-	
-	// Add Bike Routing renderer
-	var rendererOptions = {
-		draggable: true
-	};
+	// Check for touch events
+	var rendererOptions;
+	if (Modernizr.touch)
+	{
+		alert('touch!');
+		rendererOptions = {};
+		Map.setMapOptions({
+			disableDoubleClickZoom : true,
+			zoomControlOptions : {
+				style : google.maps.ZoomControlStyle.SMALL,
+				position : google.maps.ControlPosition.LEFT_TOP
+			}
+		});
+	}
+	else
+	{
+		console.log('no touch!');
+		rendererOptions = {
+			draggable: true
+		};
+	}
+	Map.initMap();
 	var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 	directionsDisplay.setMap(Map.Map);
 	// Add Google Bicycle Layer

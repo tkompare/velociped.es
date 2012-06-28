@@ -18,11 +18,7 @@ function TkMap(Args)
 			streetViewControl : false,
 			styles : [],
 			zoom: Zoom,
-			zoomControl : true,
-			zoomControlOptions : {
-				style : google.maps.ZoomControlStyle.SMALL,
-				position : google.maps.ControlPosition.LEFT_TOP
-			}
+			zoomControl : true
 	};
 	// Default Public Properties
 	this.Map = null;
