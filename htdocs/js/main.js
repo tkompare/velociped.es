@@ -1,4 +1,8 @@
 $(document).ready(function() {
+	// What step am I currently diplaying
+	var thisStep = 0;
+	var totalsteps = 0;
+	var allsteps = new Array();
 	// The directions service
 	var directionsService = new google.maps.DirectionsService();
 	// Make the map.
@@ -12,7 +16,6 @@ $(document).ready(function() {
 	var rendererOptions;
 	if (Modernizr.touch)
 	{
-		alert('touch!');
 		rendererOptions = {};
 		Map.setMapOptions({
 			disableDoubleClickZoom : true,
@@ -25,7 +28,6 @@ $(document).ready(function() {
 	}
 	else
 	{
-		console.log('no touch!');
 		rendererOptions = {
 			draggable: true
 		};
@@ -84,7 +86,6 @@ $(document).ready(function() {
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
 				directionsDisplay.setDirections(response);
-				//setDirectionsText(response);
 			}
 		});
 	});
@@ -94,17 +95,18 @@ $(document).ready(function() {
 		$('#directions').text('');
 		var lastwaypt = null;
 		// Text for Routing here.
-		$('#directions').text('');
 		var distance = 0;
-		$('#directions').append('<br>'+response.routes[0].copyrights+'<br>');
+		$('#directions').append('<br>'+response.routes[0].copyrights+' ');
 		var legcount = response.routes[0].legs.length;
-		console.log('legcount = '+legcount);
 		var l = 0;
+		thisStep = 0;
+		totalsteps = 0;
+		allsteps = new Array();
+		$('#directions-text').text('');
 		for (var leg in response.routes[0].legs)
 		{
 			l++;
 			var stepcount = response.routes[0].legs[leg].steps.length;
-			console.log('stepcount = '+stepcount);
 			var s = 0;
 			for(var x in response.routes[0].legs[leg].steps)
 			{
@@ -113,12 +115,13 @@ $(document).ready(function() {
 				thisstep++;
 				var stepmiles = response.routes[0].legs[leg].steps[x].distance.value /1609.334;
 				stepmiles = Math.round(stepmiles*100)/100;
-				$('#directions').append(thisstep +'. '+response.routes[0].legs[leg].steps[x].instructions+' - '+stepmiles+' miles<br>');
 				distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
+				allsteps[totalsteps] = new Object();
+				allsteps[totalsteps].text = totalsteps+'. '+response.routes[0].legs[leg].steps[x].instructions+', and go '+stepmiles+' miles';
+				allsteps[totalsteps].latlng = response.routes[0].legs[leg].steps[x].start_location;
 				if(l == legcount && s == stepcount)
 				{
 					lastwaypt = response.routes[0].legs[leg].steps[x].end_location;
-					//Map.Map.setCenter(lastwaypt);
 					var lastlat = lastwaypt.lat();
 					var lastlng = lastwaypt.lng();
 					var BikeRackLayer = new TkSocrataView({
@@ -126,30 +129,72 @@ $(document).ready(function() {
 						domain : 'data.cityofchicago.org',
 					});
 				}
+				totalsteps++;
 			}
-			$('#directions').append('<br>');
+			//$('#directions').append('<br>');
 		}
 		var miles = distance / 1609.344;
 		miles = Math.round(miles*100)/100;
-		$('#directions').append(miles+' total miles.');
+		$('#directions').append(' - <b>'+miles+' total miles.</b><br><br>');
 		if($(window).width() < 769)
 		{
 			$('#show-directions').text('Show Directions');
 			$('#show-directions').removeClass('hide');
 			$('#alert-directions').addClass('hide');
+			$('#btn-dir').addClass('hide');
 		}
 		else
 		{
 			$('#show-directions').text('Hide Directions');
 			$('#show-directions').removeClass('hide');
 			$('#alert-directions').removeClass('hide');
+			$('#btn-dir').removeClass('hide');
 		}
 	}
 	// Directions Change listener
 	google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+		thisStep = 0;
 		setDirectionsText(directionsDisplay.directions);
 	});
-
+	// btn-dir-start listener
+	$('#btn-dir-start').click(function(){
+		thisStep = 0;
+		Map.Map.setCenter(allsteps[thisStep].latlng);
+		Map.Map.setOptions({
+			zoom : 18
+		});
+		$('#directions-text').html(allsteps[thisStep].text);
+	});
+	$('#btn-dir-back').click(function(){
+		if(thisStep > 0)
+		{
+			thisStep--;
+			Map.Map.setCenter(allsteps[thisStep].latlng);
+			Map.Map.setOptions({
+				zoom : 18
+			});
+		}
+		$('#directions-text').html(allsteps[thisStep].text);
+	});
+	$('#btn-dir-forward').click(function(){
+		if(thisStep < (allsteps.length - 1))
+		{
+			thisStep++;
+			Map.Map.setCenter(allsteps[thisStep].latlng);
+			Map.Map.setOptions({
+				zoom : 17
+			});
+		}
+		$('#directions-text').html(allsteps[thisStep].text);
+	});
+	$('#btn-dir-end').click(function(){
+		thisStep = allsteps.length - 1;
+		Map.Map.setCenter(allsteps[thisStep].latlng);
+		Map.Map.setOptions({
+			zoom : 18
+		});
+		$('#directions-text').html(allsteps[thisStep].text);
+	});
 	// Show Directions listener
 	$('#show-directions').click(function(){
 		if($('#alert-directions').hasClass('hide'))
@@ -161,6 +206,14 @@ $(document).ready(function() {
 		{
 			$('#show-directions').text('Show Directions');
 			$('#alert-directions').addClass('hide');
+		}
+		if($('#btn-dir').hasClass('hide'))
+		{
+			$('#btn-dir').removeClass('hide');
+		}
+		else
+		{
+			$('#btn-dir').addClass('hide');
 		}
 	});
 	// More button listener
@@ -180,7 +233,7 @@ $(document).ready(function() {
 	$('#btn-stop1').click(function(){
 		$('#stop1').val('');
 	});
-//Stop1 clear button
+	// Stop2 clear button
 	$('#btn-stop2').click(function(){
 		$('#stop2').val('');
 	});

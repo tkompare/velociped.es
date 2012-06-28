@@ -40,7 +40,6 @@ function TkMap(Args)
 	this.setResponsive = function()
 	{
 		var theWidth = $("#"+DomId).width();
-		console.log(theWidth);
 		if(theWidth < 481)
 		{
 			MapOptions.zoom--;
