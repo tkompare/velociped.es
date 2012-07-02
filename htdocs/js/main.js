@@ -3,6 +3,9 @@ $(document).ready(function() {
 	var thisStep = 0;
 	var totalsteps = 0;
 	var allsteps = new Array();
+	var RackMarkers = [];
+	var MapBounds = null;
+	var StepLine = null; 
 	// The directions service
 	var directionsService = new google.maps.DirectionsService();
 	// Make the map.
@@ -43,6 +46,10 @@ $(document).ready(function() {
 		geo:'geometry',
 		map:Map.Map,
 		tableid:'4329179'
+	});
+	var BikeRackLayer = new TkSocrataView({
+		viewid : 'cbyb-69xx',
+		domain : 'data.cityofchicago.org',
 	});
 	// Add map lock listener
 	$('#maplock').click(function(){
@@ -93,7 +100,6 @@ $(document).ready(function() {
 	function setDirectionsText(response)
 	{
 		$('#directions').text('');
-		var lastwaypt = null;
 		// Text for Routing here.
 		var distance = 0;
 		$('#directions').append('<br>'+response.routes[0].copyrights+' ');
@@ -119,16 +125,8 @@ $(document).ready(function() {
 				allsteps[totalsteps] = new Object();
 				allsteps[totalsteps].text = (totalsteps+1)+'. '+response.routes[0].legs[leg].steps[x].instructions+', and go '+stepmiles+' miles';
 				allsteps[totalsteps].latlng = response.routes[0].legs[leg].steps[x].start_location;
-				if(l == legcount && s == stepcount)
-				{
-					lastwaypt = response.routes[0].legs[leg].steps[x].end_location;
-					var lastlat = lastwaypt.lat();
-					var lastlng = lastwaypt.lng();
-					var BikeRackLayer = new TkSocrataView({
-						viewid : 'cbyb-69xx',
-						domain : 'data.cityofchicago.org',
-					});
-				}
+				allsteps[totalsteps].latlngEnd = response.routes[0].legs[leg].steps[x].end_location;
+				allsteps[totalsteps].path = response.routes[0].legs[leg].steps[x].path;
 				totalsteps++;
 			}
 			//$('#directions').append('<br>');
@@ -159,41 +157,89 @@ $(document).ready(function() {
 	// btn-dir-start listener
 	$('#btn-dir-start').click(function(){
 		thisStep = 0;
-		Map.Map.setCenter(allsteps[thisStep].latlng);
-		Map.Map.setOptions({
-			zoom : 17
+		MapBounds = new google.maps.LatLngBounds();
+		MapBounds.extend(allsteps[thisStep].latlng);
+		MapBounds.extend(allsteps[thisStep].latlngEnd);
+		Map.Map.fitBounds(MapBounds);
+		if(StepLine !== null)
+		{
+			StepLine.setMap(null);
+		}
+		StepLine = new google.maps.Polyline({
+			path: allsteps[thisStep].path,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 4 
 		});
+		StepLine.setMap(Map.Map);
 		$('#directions-text').html(allsteps[thisStep].text);
+		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-back').click(function(){
 		if(thisStep > 0)
 		{
 			thisStep--;
-			Map.Map.setCenter(allsteps[thisStep].latlng);
-			Map.Map.setOptions({
-				zoom : 17
+			MapBounds = new google.maps.LatLngBounds();
+			MapBounds.extend(allsteps[thisStep].latlng);
+			MapBounds.extend(allsteps[thisStep].latlngEnd);
+			Map.Map.fitBounds(MapBounds);
+			if(StepLine !== null)
+			{
+				StepLine.setMap(null);
+			}
+			StepLine = new google.maps.Polyline({
+				path: allsteps[thisStep].path,
+				strokeColor: "#FF0000",
+				strokeOpacity: 1.0,
+				strokeWeight: 4 
 			});
+			StepLine.setMap(Map.Map);
 		}
 		$('#directions-text').html(allsteps[thisStep].text);
+		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-forward').click(function(){
 		if(thisStep < (allsteps.length - 1))
 		{
 			thisStep++;
-			Map.Map.setCenter(allsteps[thisStep].latlng);
-			Map.Map.setOptions({
-				zoom : 17
+			MapBounds = new google.maps.LatLngBounds();
+			MapBounds.extend(allsteps[thisStep].latlng);
+			MapBounds.extend(allsteps[thisStep].latlngEnd);
+			Map.Map.fitBounds(MapBounds);
+			if(StepLine !== null)
+			{
+				StepLine.setMap(null);
+			}
+			StepLine = new google.maps.Polyline({
+				path: allsteps[thisStep].path,
+				strokeColor: "#FF0000",
+				strokeOpacity: 1.0,
+				strokeWeight: 4
 			});
+			StepLine.setMap(Map.Map);
 		}
 		$('#directions-text').html(allsteps[thisStep].text);
+		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-end').click(function(){
 		thisStep = allsteps.length - 1;
-		Map.Map.setCenter(allsteps[thisStep].latlng);
-		Map.Map.setOptions({
-			zoom : 17
+		MapBounds = new google.maps.LatLngBounds();
+		MapBounds.extend(allsteps[thisStep].latlng);
+		MapBounds.extend(allsteps[thisStep].latlngEnd);
+		Map.Map.fitBounds(MapBounds);
+		if(StepLine !== null)
+		{
+			StepLine.setMap(null);
+		}
+		StepLine = new google.maps.Polyline({
+			path: allsteps[thisStep].path,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 4
 		});
+		StepLine.setMap(Map.Map);
 		$('#directions-text').html(allsteps[thisStep].text);
+		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	// Show Directions listener
 	$('#show-directions').click(function(){
@@ -289,7 +335,8 @@ $(document).ready(function() {
 		}
 	}
 	// The Geocoder function
-	function codeLatLng(latlng) {
+	function codeLatLng(latlng)
+	{
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode(
 			{'latLng': latlng},
@@ -308,5 +355,37 @@ $(document).ready(function() {
 				}
 			}
 		);
+	}
+	function showBikeRacks(LatLng)
+	{
+		if(RackMarkers.length > 0)
+		{
+			for(var x in RackMarkers)
+			{
+				RackMarkers[x].setMap(null);
+			}
+		}
+		var TheseRacks = BikeRackLayer.getData();
+		var RackLatLng = [];
+		var rackcount = 0;
+		for(var x in TheseRacks)
+		{
+			if(
+				TheseRacks[x].latitude < LatLng.lat() + 0.0019 &&
+				TheseRacks[x].latitude > LatLng.lat() - 0.0019 &&
+				TheseRacks[x].longitude < LatLng.lng() + 0.00245 &&
+				TheseRacks[x].longitude > LatLng.lng() - 0.00245
+			)
+			{
+				RackLatLng[rackcount] = new google.maps.LatLng(TheseRacks[x].latitude,TheseRacks[x].longitude);
+				RackMarkers[rackcount] = new google.maps.Marker({
+					position: RackLatLng[rackcount],
+					map: Map.Map,
+				});
+				MapBounds.extend(RackLatLng[rackcount]);
+				Map.Map.fitBounds(MapBounds);
+				rackcount++;
+			}
+		}
 	}
 });
