@@ -4,6 +4,13 @@ $(document).ready(function() {
 	var totalsteps = 0;
 	var allsteps = new Array();
 	var RackMarkers = [];
+	var RackInfoBox = [];
+	var RackInfoBoxViz = {
+			open : function(map,marker,box)
+			{
+					return function() { box.open(map,marker); };
+			}
+	};
 	var MapBounds = null;
 	var StepLine = null; 
 	// The directions service
@@ -61,6 +68,17 @@ $(document).ready(function() {
 	});
 	// Routing listener
 	$('#route').click(function(){
+		if(StepLine !== null)
+		{
+			StepLine.setMap(null);
+		}
+		if(RackMarkers.length > 0)
+		{
+			for(var x in RackMarkers)
+			{
+				RackMarkers[x].setMap(null);
+			}
+		}
 		var origin = $('#origin').val() + ' Chicago, IL';
 		var destination = $('#destination').val() + ' Chicago, IL';
 		var waypts = [];
@@ -362,8 +380,15 @@ $(document).ready(function() {
 		{
 			for(var x in RackMarkers)
 			{
+				google.maps.event.clearInstanceListeners(RackMarkers[x]);
 				RackMarkers[x].setMap(null);
 			}
+			for(var x in RackInfoBox)
+			{
+				RackInfoBox[x].close();
+			}
+			RackInfoBox = [];
+			RackMarkers = [];
 		}
 		var TheseRacks = BikeRackLayer.getData();
 		var RackLatLng = [];
@@ -377,13 +402,38 @@ $(document).ready(function() {
 				TheseRacks[x].longitude > LatLng.lng() - 0.00245
 			)
 			{
+				// Make the Rack Marker
 				RackLatLng[rackcount] = new google.maps.LatLng(TheseRacks[x].latitude,TheseRacks[x].longitude);
 				RackMarkers[rackcount] = new google.maps.Marker({
 					position: RackLatLng[rackcount],
 					map: Map.Map,
 				});
+				//RackAddress[rackcount] = TheseRacks[x].address;
+				var InfoBoxText = '<div class="infoBox" style="border:1px solid rgb(0,0,0); margin-top:8px; background:rgb(255,207,207); padding:5px; font-size:80%;">'+
+				TheseRacks[x].address+'<br>Number of Racks: '+Math.round(TheseRacks[x].totinstall)+'</div>';
+				InfoBoxOptions = {
+					content: InfoBoxText
+					,disableAutoPan: false
+					,maxWidth: 0
+					,pixelOffset: new google.maps.Size(-84, 0)
+					,zIndex: null
+					,boxStyle: { 
+						background: "url('img/tipbox.gif') no-repeat"
+						,opacity: 0.95
+						,width: "160px"
+					}
+					,closeBoxMargin: "10px 2px 2px 2px"
+					,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+					,infoBoxClearance: new google.maps.Size(1, 1)
+					,isHidden: false
+					,pane: "floatPane"
+					,enableEventPropagation: false
+				};
+				RackInfoBox[rackcount] = new InfoBox(InfoBoxOptions);
 				MapBounds.extend(RackLatLng[rackcount]);
 				Map.Map.fitBounds(MapBounds);
+				google.maps.event.addListener(RackMarkers[rackcount], 'click', RackInfoBoxViz.open(Map.Map,RackMarkers[rackcount],RackInfoBox[rackcount]));
+				// Reset zoom and position
 				rackcount++;
 			}
 		}
