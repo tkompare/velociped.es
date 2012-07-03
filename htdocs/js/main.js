@@ -141,7 +141,7 @@ $(document).ready(function() {
 				stepmiles = Math.round(stepmiles*100)/100;
 				distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
 				allsteps[totalsteps] = new Object();
-				allsteps[totalsteps].text = (totalsteps+1)+'. '+response.routes[0].legs[leg].steps[x].instructions+', and go '+stepmiles+' miles';
+				allsteps[totalsteps].text = (totalsteps+1)+'. '+response.routes[0].legs[leg].steps[x].instructions+' (Go '+stepmiles+' miles)';
 				allsteps[totalsteps].latlng = response.routes[0].legs[leg].steps[x].start_location;
 				allsteps[totalsteps].latlngEnd = response.routes[0].legs[leg].steps[x].end_location;
 				allsteps[totalsteps].path = response.routes[0].legs[leg].steps[x].path;
@@ -407,9 +407,10 @@ $(document).ready(function() {
 				RackMarkers[rackcount] = new google.maps.Marker({
 					position: RackLatLng[rackcount],
 					map: Map.Map,
+					icon : 'img/bikelock20.png'
 				});
 				//RackAddress[rackcount] = TheseRacks[x].address;
-				var InfoBoxText = '<div class="infoBox" style="border:1px solid rgb(0,0,0); margin-top:8px; background:rgb(255,207,207); padding:5px; font-size:80%;">'+
+				var InfoBoxText = '<div class="infoBox" style="border:1px solid rgb(0,0,0); margin-top:8px; background:rgb(207,255,207); padding:5px; font-size:80%;">'+
 				TheseRacks[x].address+'<br>Number of Racks: '+Math.round(TheseRacks[x].totinstall)+'</div>';
 				InfoBoxOptions = {
 					content: InfoBoxText
