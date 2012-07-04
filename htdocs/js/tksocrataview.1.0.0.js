@@ -13,9 +13,9 @@ function TkSocrataView(Args)
 		// Get the column names
 		var SocrataColNames = [];
 		var theLength = TheData.meta.view.columns.length;
-		for (var i=9; i<theLength; i++)
+		for (var i=8; i<theLength; i++)
 		{
-			var j = i - 9;
+			var j = i - 8;
 			SocrataColNames[j] = TheData.meta.view.columns[i].fieldName;
 		}
 		var newColLength = SocrataColNames.length;
@@ -24,7 +24,7 @@ function TkSocrataView(Args)
 		for (var i=0; i<SocrataData.length; i++)
 		{
 		// Remove unneeded SODA 1.0 columns
-			for (var j=0; j<9; j++)
+			for (var j=0; j<8; j++)
 			{
 				SocrataData[i].shift();
 			}

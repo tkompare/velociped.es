@@ -9,6 +9,10 @@ $(document).ready(function() {
 			open : function(map,marker,box)
 			{
 					return function() { box.open(map,marker); };
+			},
+			close : function(map,marker,box)
+			{
+					return function() { box.close(map,marker); };
 			}
 	};
 	var MapBounds = null;
@@ -55,7 +59,7 @@ $(document).ready(function() {
 		tableid:'4329179'
 	});
 	var BikeRackLayer = new TkSocrataView({
-		viewid : 'cbyb-69xx',
+		viewid: '3jcw-ywxj',
 		domain : 'data.cityofchicago.org',
 	});
 	// Add map lock listener
@@ -409,8 +413,9 @@ $(document).ready(function() {
 					map: Map.Map,
 					icon : 'img/bikelock20.png'
 				});
-				//RackAddress[rackcount] = TheseRacks[x].address;
-				var InfoBoxText = '<div class="infoBox" style="border:1px solid rgb(0,0,0); margin-top:8px; background:rgb(207,255,207); padding:5px; font-size:80%;">'+
+				// And now the infobox for each bike rack...
+				console.log(TheseRacks[x]);
+				var InfoBoxText = '<div id="infobox'+rackcount+'" class="infoBox" style="border:3px solid rgb(0,0,0); margin-top:8px; background:rgb(247,247,247); padding:5px; font-size:85%;">'+
 				TheseRacks[x].address+'<br>Number of Racks: '+Math.round(TheseRacks[x].totinstall)+'</div>';
 				InfoBoxOptions = {
 					content: InfoBoxText
@@ -423,7 +428,7 @@ $(document).ready(function() {
 						,opacity: 0.95
 						,width: "160px"
 					}
-					,closeBoxMargin: "10px 2px 2px 2px"
+					,closeBoxMargin: "13px 5px 5px 5px"
 					,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
 					,infoBoxClearance: new google.maps.Size(1, 1)
 					,isHidden: false
