@@ -104,8 +104,8 @@
 					<button id="btn-dir-forward" class="btn btn-info">Next <i class="icon-forward icon-white"></i></button>
 					<button id="btn-dir-end" class="btn btn-primary">End</button>
 				</div>
-				<hr>
-				<div class="well alert-error"><span id="directions-text"></span></div>
+				<div><br></div>
+				<div id="directions" class="well alert-info"><span id="directions-text"></span></div>
 			</div>
 		</div>
 		<div class="span8">
@@ -120,6 +120,45 @@
 	</div>
 	<div class="row-fluid">
 		<div class="span12 padded">
+			<div>
+				<button id="btn-help" class="btn btn-info btn-mini">Help</button>
+			</div>
+			<div id="div-help" class="well hide">
+				<h3>Bike Routes Markings</h3>
+				<div class="row-fluid">
+					<div class="span8">
+						<table class="table table-condensed table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Route Type</th>
+									<th>Pattern &amp; Color</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>City of Chicago marked</td>
+									<td>Thick dark green</td>
+								</tr>
+								<tr>
+									<td>City of Chicago recommended</td>
+									<td>Thick light green</td>
+								</tr>
+								<tr>
+									<td>Google reported</td>
+									<td>Thin dark green</td>
+								</tr>
+								<tr>
+									<td>Google recommended</td>
+									<td>Thin dashed green</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="span4">
+						<img src="img/pathtypes.png" alt="Path types image" style="padding:4px;" />
+					</div>
+				</div>
+			</div>
 			<hr />
 			<footer>
 				<p>&copy;2012 <a href="http://twitter.com/tomkompare">Tom Kompare</a><br>

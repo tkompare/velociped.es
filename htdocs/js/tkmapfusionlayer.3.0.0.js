@@ -8,6 +8,7 @@ function TkMapFusionLayer(Args)
 	// Default private properties from optional arguments
 	var Where = typeof Args.where !== 'undefined' ? Args.where : null;
 	var Icon = typeof Args.icon !== 'undefined' ? Args.icon : null;
+	var Style = typeof Args.style !== 'undefined' ? Args.style : null;
 	// Default public properties
 	this.Layer = null;
 	/* METHODS *****************************************************************/
@@ -16,6 +17,7 @@ function TkMapFusionLayer(Args)
 		// Set properties from arguments
 		var showWhere = typeof Args.where !== 'undefined' ? Args.where : Where;
 		var showIcon = typeof Args.icon !== 'undefined' ? Args.icon : Icon;
+		var showStyle = typeof Args.linestyle !== 'undefined' ? Args.style : Style;
 		// Hide the layer
 		this.hideLayer();
 		// Am I displaying a search result?
@@ -42,6 +44,14 @@ function TkMapFusionLayer(Args)
 				styles: [{
 					markerOptions: { iconName: showIcon }
 				}]
+			});
+		}
+		else if (showStyle !== null)
+		{
+			this.Layer = new google.maps.FusionTablesLayer({
+				clickable : false,
+				query: Query,
+				styles: showStyle
 			});
 		}
 		else

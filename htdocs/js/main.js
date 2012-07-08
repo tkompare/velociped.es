@@ -58,7 +58,22 @@ $(document).ready(function() {
 	var CityBikeLayer = new TkMapFusionLayer({
 		geo:'geometry',
 		map:Map.Map,
-		tableid:'4329179'
+		tableid:'4329179',
+		style: [{
+			where: "description CONTAINS 'RECOMMENDED BIKE ROUTE'",
+			polylineOptions: {
+				strokeColor: '#77AA00',
+				strokeWeight: '4',
+				strokeOpacity: '0.75'
+			}
+		},{
+			where: "description DOES NOT CONTAIN 'RECOMMENDED BIKE ROUTE'",
+			polylineOptions: {
+				strokeColor: '#004400',
+				strokeWeight: '4',
+				strokeOpacity: '0.75'
+			}
+		}]
 	});
 	var BikeRackLayer = new TkSocrataView({
 		viewid: '3jcw-ywxj',
@@ -66,7 +81,7 @@ $(document).ready(function() {
 	});
 	// Add distance div to map
 	var myControl = document.getElementById('myTextDiv');
-	Map.Map.controls[google.maps.ControlPosition.TOP_CENTER].push(myControl);
+	Map.Map.controls[google.maps.ControlPosition.RIGHT_TOP].push(myControl);
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
@@ -123,7 +138,6 @@ $(document).ready(function() {
 	// Set the directions text
 	function setDirectionsText(response)
 	{
-		$('#directions-text').text('Text directions appear after clicking a button above.');
 		// Text for Routing here.
 		var distance = 0;
 		var l = 0;
@@ -152,7 +166,8 @@ $(document).ready(function() {
 		}
 		var miles = distance / 1609.344;
 		miles = Math.round(miles*100)/100;
-		$('#myTextDiv').html('<b>Total Distance: '+miles+' miles</b>');
+		$('#myTextDiv').html('<b>Total Distance: '+miles+' miles.</b>');
+		$('#directions-text').html('<b>Total Distance: '+miles+' miles</b><br>Click above to step through directions.');
 		if($(window).width() < 769)
 		{
 			$('#show-directions').text('Show Directions');
@@ -194,6 +209,11 @@ $(document).ready(function() {
 		StepLine.setMap(Map.Map);
 		$('#directions-text').fadeOut(function(){
 			$('#directions-text').html(allsteps[thisStep].text);
+			if($('#directions').hasClass('alert-info'))
+			{
+				$('#directions').removeClass('alert-info');
+				$('#directions').addClass('alert-error');
+			}
 			$('#directions-text').fadeIn();
 		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
@@ -221,6 +241,11 @@ $(document).ready(function() {
 		}
 		$('#directions-text').fadeOut(function(){
 			$('#directions-text').html(allsteps[thisStep].text);
+			if($('#directions').hasClass('alert-info'))
+			{
+				$('#directions').removeClass('alert-info');
+				$('#directions').addClass('alert-error');
+			}
 			$('#directions-text').fadeIn();
 		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
@@ -248,6 +273,11 @@ $(document).ready(function() {
 		}
 		$('#directions-text').fadeOut(function(){
 			$('#directions-text').html(allsteps[thisStep].text);
+			if($('#directions').hasClass('alert-info'))
+			{
+				$('#directions').removeClass('alert-info');
+				$('#directions').addClass('alert-error');
+			}
 			$('#directions-text').fadeIn();
 		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
@@ -272,6 +302,11 @@ $(document).ready(function() {
 		StepLine.setMap(Map.Map);
 		$('#directions-text').fadeOut(function(){
 			$('#directions-text').html(allsteps[thisStep].text);
+			if($('#directions').hasClass('alert-info'))
+			{
+				$('#directions').removeClass('alert-info');
+				$('#directions').addClass('alert-error');
+			}
 			$('#directions-text').fadeIn();
 		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
@@ -308,6 +343,19 @@ $(document).ready(function() {
 		{
 			$('#btn-more').text('More');
 			$('#div-more').addClass('hide');
+		}
+	});
+	// Help button listener
+	$('#btn-help').click(function(){
+		if($('#div-help').hasClass('hide'))
+		{
+			$('#btn-help').text('Hide');
+			$('#div-help').removeClass('hide');
+		}
+		else
+		{
+			$('#btn-help').text('Help');
+			$('#div-help').addClass('hide');
 		}
 	});
 	// Stop1 clear button
