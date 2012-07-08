@@ -108,7 +108,7 @@ function TkMap(Args)
 					}
 					else if (Styles[i] === 'grey')
 					{
-						MapOptions.backgroundColor = 'grey';
+						MapOptions.backgroundColor = '#C5C5C5';
 						MapOptions.styles.push 
 						(
 							{

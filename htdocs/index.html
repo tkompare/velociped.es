@@ -40,59 +40,56 @@
 	<div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span4 padded">
-			<div class="row-fluid page-header">
+			<div class="row-fluid">
 				<div class="span2">
 					<img src="img/veolcipedes-72.png" alt="Velociped.es" style="width:36px;height:36px; padding:4px;"/>
 				</div>
-				<div class="span9">
+				<div class="span10">
 					<h2 style="padding-top:5px;">Velociped.es</h2>
 				</div>
-				<p class="span12"><b>Bicycling directions</b> for your next ride.</p>
 			</div>
-			<div class="alert">
-				<button class="close" data-dismiss="alert">×</button>
-				<p><strong>Caution</strong>: Development Draft</p>
+			<div>
+				<p><b>Bicycling directions</b> for your next ride.</p>
 			</div>
 			<div class="well">
 				<div class="row-fluid">
 					<div class="span12">
 						<span class="help-block">Chicago addresses or locations only.</span>
 						<div class="control-group">
-						<label class="control-label" for="origin"><b>From</b></label>
+						<label class="control-label" for="origin"><b>Start</b></label>
 							<div class="controls">
 								<div class="input-append">
 									<input id="origin" type="text" class="span9" placeholder="123 W Street Name">
-									<button id="gps" class="btn btn-info" type="button">GPS</button>
+									<button id="gps" class="btn btn-inverse" type="button">GPS</button>
 								</div>
 							</div>
 						</div>
-						<label for="destination"><b>To</b>
+						<div id="div-more" class="hide">
+							<div class="control-group">
+								<label class="control-label" for="stop1"><b>Stop #1</b></label>
+								<div class="controls">
+									<div class="input-append">
+										<input id="stop1" type="text" class="span9" placeholder="enter 1st stop here">
+										<button id="btn-stop1" class="btn btn-info" type="button">Clear</button>
+									</div>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="stop2"><b>Stop #2</b></label>
+								<div class="controls">
+									<div class="input-append">
+										<input id="stop2" type="text" class="span9" placeholder="enter 2nd stop here">
+										<button id="btn-stop2" class="btn btn-info" type="button">Clear</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="destination"><b>Finish</b>
 							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
 						</label>
-						<button id="route" class="btn btn-success">Route</button>
+						<button id="route" class="btn btn-primary">Route</button>
 						<button id="show-directions" class="btn hide">Show Directions</button>
-						<button id="btn-more" class="btn btn-info">More</button>
-					</div>
-				</div>
-			</div>
-			<div id="div-more" class="well hide">
-				<p>Stopping somewhere on your way?</p>
-				<div class="control-group">
-					<label class="control-label" for="stop1"><b>Stop #1</b></label>
-					<div class="controls">
-						<div class="input-append">
-							<input id="stop1" type="text" class="span9" placeholder="enter 1st stop here">
-							<button id="btn-stop1" class="btn btn-info" type="button">Clear</button>
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="stop2"><b>Stop #2</b></label>
-					<div class="controls">
-						<div class="input-append">
-							<input id="stop2" type="text" class="span9" placeholder="enter 2nd stop here">
-							<button id="btn-stop2" class="btn btn-info" type="button">Clear</button>
-						</div>
+						<button id="btn-more" class="btn">More</button>
 					</div>
 				</div>
 			</div>
@@ -100,15 +97,15 @@
 				<button class="close" data-dismiss="alert">×</button>
 				<strong>Notice:</strong> <span id="gpsfail">GPS locating failed</span>
 			</div>
-			<div id="alert-directions" class="alert alert-success hide">
-				<div id="btn-dir" class="row-fluid hide">
-					<button id="btn-dir-start"class="btn">Start</button>
-					<button id="btn-dir-back" class="btn"><i class="icon-backward"></i> Back</button>
-					<button id="btn-dir-forward" class="btn">Next <i class="icon-forward"></i></button>
-					<button id="btn-dir-end" class="btn">End</button>
+			<div id="alert-directions" class="well hide">
+				<div id="btn-dir" class="row-fluid">
+					<button id="btn-dir-start"class="btn btn-primary">Start</button>
+					<button id="btn-dir-back" class="btn btn-info"><i class="icon-backward icon-white"></i> Back</button>
+					<button id="btn-dir-forward" class="btn btn-info">Next <i class="icon-forward icon-white"></i></button>
+					<button id="btn-dir-end" class="btn btn-primary">End</button>
 				</div>
-				<span id="directions"></span>
-				<span id="directions-text"></span>
+				<hr>
+				<div class="well alert-error"><span id="directions-text"></span></div>
 			</div>
 		</div>
 		<div class="span8">
@@ -118,6 +115,7 @@
 					<div id="map" style="position:absolute; top:0; bottom:0; left:0;right:0;"></div>
 				</div>
 			</div>
+			<div id="myTextDiv" style="color: black; position: absolute;"></div>
 		</div>
 	</div>
 	<div class="row-fluid">

@@ -5,6 +5,7 @@ $(document).ready(function() {
 	var allsteps = new Array();
 	var RackMarkers = [];
 	var RackInfoBox = [];
+	var homeControlDiv = null;
 	var RackInfoBoxViz = {
 			open : function(map,marker,box)
 			{
@@ -21,8 +22,8 @@ $(document).ready(function() {
 	var directionsService = new google.maps.DirectionsService();
 	// Make the map.
 	var Map = new TkMap({
-		lat:42.01048,
-		lng:-87.6652,
+		lat:41.882103,
+		lng:-87.627793,
 		domid:'map',
 		init:false
 	});
@@ -52,6 +53,7 @@ $(document).ready(function() {
 	// Add Google Bicycle Layer
 	var GoogleBikeLayer = new google.maps.BicyclingLayer();
 	GoogleBikeLayer.setMap(Map.Map);
+	Map.setCustomStyles({styles:'grey'});
 	// Add City Bike layer
 	var CityBikeLayer = new TkMapFusionLayer({
 		geo:'geometry',
@@ -62,6 +64,9 @@ $(document).ready(function() {
 		viewid: '3jcw-ywxj',
 		domain : 'data.cityofchicago.org',
 	});
+	// Add distance div to map
+	var myControl = document.getElementById('myTextDiv');
+	Map.Map.controls[google.maps.ControlPosition.TOP_CENTER].push(myControl);
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
@@ -107,9 +112,6 @@ $(document).ready(function() {
 			destination : destination,
 			waypoints : waypts,
 			optimizeWaypoints : true,
-			// Note that Javascript allows us to access the constant
-			// using square brackets and a string value as its
-			// "property."
 			travelMode: google.maps.TravelMode.BICYCLING
 		};
 		directionsService.route(request, function(response, status) {
@@ -121,20 +123,16 @@ $(document).ready(function() {
 	// Set the directions text
 	function setDirectionsText(response)
 	{
-		$('#directions').text('');
+		$('#directions-text').text('Text directions appear after clicking a button above.');
 		// Text for Routing here.
 		var distance = 0;
-		$('#directions').append('<br>'+response.routes[0].copyrights+' ');
-		var legcount = response.routes[0].legs.length;
 		var l = 0;
 		thisStep = 0;
 		totalsteps = 0;
 		allsteps = new Array();
-		$('#directions-text').text('');
 		for (var leg in response.routes[0].legs)
 		{
 			l++;
-			var stepcount = response.routes[0].legs[leg].steps.length;
 			var s = 0;
 			for(var x in response.routes[0].legs[leg].steps)
 			{
@@ -151,11 +149,10 @@ $(document).ready(function() {
 				allsteps[totalsteps].path = response.routes[0].legs[leg].steps[x].path;
 				totalsteps++;
 			}
-			//$('#directions').append('<br>');
 		}
 		var miles = distance / 1609.344;
 		miles = Math.round(miles*100)/100;
-		$('#directions').append(' - <b>'+miles+' total miles.</b><br><br>');
+		$('#myTextDiv').html('<b>Total Distance: '+miles+' miles</b>');
 		if($(window).width() < 769)
 		{
 			$('#show-directions').text('Show Directions');
@@ -191,10 +188,14 @@ $(document).ready(function() {
 			path: allsteps[thisStep].path,
 			strokeColor: "#FF0000",
 			strokeOpacity: 1.0,
-			strokeWeight: 4 
+			strokeWeight: 5,
+			zIndex: 100000
 		});
 		StepLine.setMap(Map.Map);
-		$('#directions-text').html(allsteps[thisStep].text);
+		$('#directions-text').fadeOut(function(){
+			$('#directions-text').html(allsteps[thisStep].text);
+			$('#directions-text').fadeIn();
+		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-back').click(function(){
@@ -213,11 +214,15 @@ $(document).ready(function() {
 				path: allsteps[thisStep].path,
 				strokeColor: "#FF0000",
 				strokeOpacity: 1.0,
-				strokeWeight: 4 
+				strokeWeight: 5,
+				zIndex: 100000
 			});
 			StepLine.setMap(Map.Map);
 		}
-		$('#directions-text').html(allsteps[thisStep].text);
+		$('#directions-text').fadeOut(function(){
+			$('#directions-text').html(allsteps[thisStep].text);
+			$('#directions-text').fadeIn();
+		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-forward').click(function(){
@@ -236,11 +241,15 @@ $(document).ready(function() {
 				path: allsteps[thisStep].path,
 				strokeColor: "#FF0000",
 				strokeOpacity: 1.0,
-				strokeWeight: 4
+				strokeWeight: 5,
+				zIndex: 100000
 			});
 			StepLine.setMap(Map.Map);
 		}
-		$('#directions-text').html(allsteps[thisStep].text);
+		$('#directions-text').fadeOut(function(){
+			$('#directions-text').html(allsteps[thisStep].text);
+			$('#directions-text').fadeIn();
+		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	$('#btn-dir-end').click(function(){
@@ -257,10 +266,14 @@ $(document).ready(function() {
 			path: allsteps[thisStep].path,
 			strokeColor: "#FF0000",
 			strokeOpacity: 1.0,
-			strokeWeight: 4
+			strokeWeight: 5,
+			zIndex: 100000
 		});
 		StepLine.setMap(Map.Map);
-		$('#directions-text').html(allsteps[thisStep].text);
+		$('#directions-text').fadeOut(function(){
+			$('#directions-text').html(allsteps[thisStep].text);
+			$('#directions-text').fadeIn();
+		});
 		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
 	// Show Directions listener
