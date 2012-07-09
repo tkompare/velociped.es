@@ -363,6 +363,11 @@ $(document).ready(function() {
 			$('#div-help').addClass('hide');
 		}
 	});
+	// Close Help Button Listener
+	$('#btn-close-help').click(function(){
+		$('#btn-help').text('Help');
+		$('#div-help').addClass('hide');
+	});
 	// Stop1 clear button
 	$('#btn-stop1').click(function(){
 		$('#stop1').val('');
