@@ -172,7 +172,7 @@ $(document).ready(function() {
 			$('#directions').removeClass('alert-error');
 			$('#directions').addClass('alert-info');
 		}
-		$('#directions-text').html('<b>Total Distance: '+miles+' miles</b><br>Click above to step through directions.');
+		$('#directions-text').html('<b>Total Distance: '+miles+' miles</b><br>Click above to step through your route.');
 		if($(window).width() < 769)
 		{
 			$('#show-directions').text('Show Directions');
