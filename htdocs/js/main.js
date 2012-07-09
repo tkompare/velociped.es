@@ -62,7 +62,7 @@ $(document).ready(function() {
 		style: [{
 			where: "description CONTAINS 'RECOMMENDED BIKE ROUTE'",
 			polylineOptions: {
-				strokeColor: '#77AA00',
+				strokeColor: '#55BB22',
 				strokeWeight: '4',
 				strokeOpacity: '0.75'
 			}
@@ -167,6 +167,11 @@ $(document).ready(function() {
 		var miles = distance / 1609.344;
 		miles = Math.round(miles*100)/100;
 		$('#myTextDiv').html('<b>Total Distance: '+miles+' miles.</b>');
+		if($('#directions').hasClass('alert-error'))
+		{
+			$('#directions').removeClass('alert-error');
+			$('#directions').addClass('alert-info');
+		}
 		$('#directions-text').html('<b>Total Distance: '+miles+' miles</b><br>Click above to step through directions.');
 		if($(window).width() < 769)
 		{
