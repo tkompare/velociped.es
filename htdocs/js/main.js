@@ -44,7 +44,8 @@ $(document).ready(function() {
 	else
 	{
 		rendererOptions = {
-			draggable: true
+			draggable: true,
+			suppressInfoWindows: true
 		};
 	}
 	Map.initMap();
@@ -121,16 +122,41 @@ $(document).ready(function() {
 				stopover : true
 			});
 		}
-		
-		var request = {
-			origin : origin,
-			destination : destination,
-			waypoints : waypts,
-			optimizeWaypoints : true,
-			travelMode: google.maps.TravelMode.BICYCLING
-		};
+		var request = null;
+		if($('#transit').is(':checked') == true)
+		{
+			request = {
+				origin : origin,
+				destination : destination,
+				waypoints : waypts,
+				optimizeWaypoints : true,
+				travelMode: google.maps.TravelMode.TRANSIT
+			};
+		}
+		else
+		{
+			request = {
+				origin : origin,
+				destination : destination,
+				waypoints : waypts,
+				optimizeWaypoints : true,
+				travelMode: google.maps.TravelMode.BICYCLING
+			};
+		}
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
+				for (var leg in response.routes[0].legs)
+				{
+					for(var x in response.routes[0].legs[leg].steps)
+					{
+						console.log(response.routes[0].legs[leg].steps[x]);
+						if(response.routes[0].legs[leg].steps[x].travel_mode == 'WALKING')
+						{
+							response.routes[0].legs[leg].steps[x].travel_mode = '';
+							console.log(response.routes[0].legs[leg].steps[x]);
+						}
+					}
+				}
 				directionsDisplay.setDirections(response);
 			}
 		});
@@ -158,6 +184,14 @@ $(document).ready(function() {
 				distance = distance + response.routes[0].legs[leg].steps[x].distance.value;
 				allsteps[totalsteps] = new Object();
 				allsteps[totalsteps].text = (totalsteps+1)+'. '+response.routes[0].legs[leg].steps[x].instructions+' (Go '+stepmiles+' miles)';
+				allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/walk/g, 'bike');
+				allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Walk/g, 'Bike');
+				if(response.routes[0].legs[leg].steps[x].travel_mode == 'TRANSIT')
+				{
+					//console.log(response.routes[0].legs[leg].steps[x].transit.line);
+					allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Bus/g, '#'+response.routes[0].legs[leg].steps[x].transit.line.short_name+' Bus');
+					allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Subway/g, response.routes[0].legs[leg].steps[x].transit.line.name);
+				}
 				allsteps[totalsteps].latlng = response.routes[0].legs[leg].steps[x].start_location;
 				allsteps[totalsteps].latlngEnd = response.routes[0].legs[leg].steps[x].end_location;
 				allsteps[totalsteps].path = response.routes[0].legs[leg].steps[x].path;
@@ -493,7 +527,7 @@ $(document).ready(function() {
 					,disableAutoPan: false
 					,maxWidth: 0
 					,pixelOffset: new google.maps.Size(-84, 0)
-					,zIndex: null
+					,zIndex: 10000
 					,boxStyle: { 
 						background: "url('img/tipbox.gif') no-repeat"
 						,opacity: 0.95

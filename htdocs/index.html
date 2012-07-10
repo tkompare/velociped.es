@@ -87,9 +87,14 @@
 						<label for="destination"><b>Finish</b>
 							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
 						</label>
+						<div>
 						<button id="route" class="btn btn-primary">Route</button>
 						<button id="show-directions" class="btn hide">Show Directions</button>
 						<button id="btn-more" class="btn">More</button>
+						</div>
+						<div style="padding-top:10px;">
+							<input id="transit" type="checkbox"> Use Public Transportation
+						</div>
 					</div>
 				</div>
 			</div>
@@ -156,6 +161,11 @@
 							the map. This is unavaliable for touch devices because reroute
 							drag-and-drop is very difficult and  a terrible user
 							experience.</p>
+						<h4>Public Transportation</h4>
+						<p>Checking the <b>Use Public Transportation</b> checkbox we will
+						route you with Google's transit routing. Unfortunately, it may route
+						you the wrong way down one way streets. So please be aware of these
+						occurances and adjust accordingly.</p>
 						<h4>Directions</h4>
 						<p>After clicking the <b>Route</b> button, use the <b>Hide/Show
 							Directions</b> button to expose turn-by-turn directions. Your 
