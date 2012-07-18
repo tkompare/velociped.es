@@ -57,7 +57,9 @@ function TkMap(Args)
 			draggable : lockBoolean,
 			zoomControl : lockBoolean,
 			disableDoubleClickZoom : dblclick,
-			scrollwheel : lockBoolean
+			scrollwheel : lockBoolean,
+			keyboardShortcuts : lockBoolean,
+			disableDefaultUI : dblclick
 		});
 	};
 	this.setCustomStyles = function(options)

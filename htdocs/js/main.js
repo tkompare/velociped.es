@@ -6,6 +6,11 @@ $(document).ready(function() {
 	var RackMarkers = [];
 	var RackInfoBox = [];
 	var homeControlDiv = null;
+	// Touch events defaults
+	var dragFlag = false;
+	var touchstartvar = 0;
+	var touchendvar = 0;
+
 	var RackInfoBoxViz = {
 			open : function(map,marker,box)
 			{
@@ -49,6 +54,19 @@ $(document).ready(function() {
 		};
 	}
 	Map.initMap();
+	if (Modernizr.touch)
+	{
+		$('#maplock').prop('checked', false);
+		Map.setLock(false);
+		document.getElementById("map").addEventListener("touchstart", thisTouchStart, true);
+		document.getElementById("map").addEventListener("touchend", thisTouchEnd, true);
+		document.getElementById("map").addEventListener("touchmove", thisTouchMove, true);
+	}
+	else
+	{
+		$('#maplock').prop('checked', true);
+		Map.setLock(true);
+	}
 	var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 	directionsDisplay.setMap(Map.Map);
 	// Add Google Bicycle Layer
@@ -76,6 +94,7 @@ $(document).ready(function() {
 			}
 		}]
 	});
+	// City Bike Racks from CDOT
 	var BikeRackLayer = new TkSocrataView({
 		viewid: '3jcw-ywxj',
 		domain : 'data.cityofchicago.org',
@@ -83,12 +102,34 @@ $(document).ready(function() {
 	// Add distance div to map
 	var myControl = document.getElementById('myTextDiv');
 	Map.Map.controls[google.maps.ControlPosition.RIGHT_TOP].push(myControl);
+	// Touch events on map element
+	function thisTouchStart(e)
+	{
+		dragFlag = true;
+		touchstartvar = e.touches[0].pageY; 
+	}
+	function thisTouchEnd()
+	{
+		dragFlag = false;
+	}
+	function thisTouchMove(e)
+	{
+		if ( !dragFlag ) return;
+		touchendvar = e.touches[0].pageY;
+		window.scrollBy( 0,( touchstartvar - touchendvar ) );
+	}
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
 			Map.setLock(true);
+			document.getElementById("map").removeEventListener("touchstart", thisTouchStart, true);
+			document.getElementById("map").removeEventListener("touchend", thisTouchEnd, true);
+			document.getElementById("map").removeEventListener("touchmove", thisTouchMove, true);
 		} else {
 			Map.setLock(false);
+			document.getElementById("map").addEventListener("touchstart", thisTouchStart, true);
+			document.getElementById("map").addEventListener("touchend", thisTouchEnd, true);
+			document.getElementById("map").addEventListener("touchmove", thisTouchMove, true);
 		}
 	});
 	// Routing listener
@@ -149,11 +190,9 @@ $(document).ready(function() {
 				{
 					for(var x in response.routes[0].legs[leg].steps)
 					{
-						console.log(response.routes[0].legs[leg].steps[x]);
 						if(response.routes[0].legs[leg].steps[x].travel_mode == 'WALKING')
 						{
 							response.routes[0].legs[leg].steps[x].travel_mode = '';
-							console.log(response.routes[0].legs[leg].steps[x]);
 						}
 					}
 				}
@@ -188,7 +227,6 @@ $(document).ready(function() {
 				allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Walk/g, 'Bike');
 				if(response.routes[0].legs[leg].steps[x].travel_mode == 'TRANSIT')
 				{
-					//console.log(response.routes[0].legs[leg].steps[x].transit.line);
 					allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Bus/g, '#'+response.routes[0].legs[leg].steps[x].transit.line.short_name+' Bus');
 					allsteps[totalsteps].text = allsteps[totalsteps].text.replace(/Subway/g, response.routes[0].legs[leg].steps[x].transit.line.name);
 				}
@@ -388,7 +426,7 @@ $(document).ready(function() {
 	$('#btn-help').click(function(){
 		if($('#div-help').hasClass('hide'))
 		{
-			$('#btn-help').text('Hide');
+			$('#btn-help').text('Close Help');
 			$('#div-help').removeClass('hide');
 		}
 		else
@@ -411,16 +449,16 @@ $(document).ready(function() {
 		$('#stop2').val('');
 	});
 	// Window size check
-	if($(window).width() > 767)
-	{
-		$('#maplock').prop('checked', true);
-		Map.setLock(true);
-	}
-	else
-	{
-		$('#maplock').prop('checked', false);
-		Map.setLock(false);
-	}
+//	if($(window).width() > 767)
+//	{
+//		$('#maplock').prop('checked', true);
+//		Map.setLock(true);
+//	}
+//	else
+//	{
+//		$('#maplock').prop('checked', false);
+//		Map.setLock(false);
+//	}
 	// Geolocation
 	$('#gps').click(function(){
 		if(navigator.geolocation)
@@ -519,7 +557,6 @@ $(document).ready(function() {
 					icon : 'img/bikelock20.png'
 				});
 				// And now the infobox for each bike rack...
-				console.log(TheseRacks[x]);
 				var InfoBoxText = '<div id="infobox'+rackcount+'" class="infoBox" style="border:3px solid rgb(0,0,0); margin-top:8px; background:rgb(247,247,247); padding:5px; font-size:85%;">'+
 				TheseRacks[x].address+'<br>Number of Racks: '+Math.round(TheseRacks[x].totinstall)+'</div>';
 				InfoBoxOptions = {
