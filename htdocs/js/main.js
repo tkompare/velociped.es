@@ -58,9 +58,6 @@ $(document).ready(function() {
 	{
 		$('#maplock').prop('checked', false);
 		Map.setLock(false);
-		document.getElementById("map").addEventListener("touchstart", thisTouchStart, true);
-		document.getElementById("map").addEventListener("touchend", thisTouchEnd, true);
-		document.getElementById("map").addEventListener("touchmove", thisTouchMove, true);
 	}
 	else
 	{
@@ -102,34 +99,12 @@ $(document).ready(function() {
 	// Add distance div to map
 	var myControl = document.getElementById('myTextDiv');
 	Map.Map.controls[google.maps.ControlPosition.RIGHT_TOP].push(myControl);
-	// Touch events on map element
-	function thisTouchStart(e)
-	{
-		dragFlag = true;
-		touchstartvar = e.touches[0].pageY; 
-	}
-	function thisTouchEnd()
-	{
-		dragFlag = false;
-	}
-	function thisTouchMove(e)
-	{
-		if ( !dragFlag ) return;
-		touchendvar = e.touches[0].pageY;
-		window.scrollBy( 0,( touchstartvar - touchendvar ) );
-	}
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
 			Map.setLock(true);
-			document.getElementById("map").removeEventListener("touchstart", thisTouchStart, true);
-			document.getElementById("map").removeEventListener("touchend", thisTouchEnd, true);
-			document.getElementById("map").removeEventListener("touchmove", thisTouchMove, true);
 		} else {
 			Map.setLock(false);
-			document.getElementById("map").addEventListener("touchstart", thisTouchStart, true);
-			document.getElementById("map").addEventListener("touchend", thisTouchEnd, true);
-			document.getElementById("map").addEventListener("touchmove", thisTouchMove, true);
 		}
 	});
 	// Routing listener

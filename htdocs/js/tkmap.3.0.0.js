@@ -20,6 +20,9 @@ function TkMap(Args)
 			zoom: Zoom,
 			zoomControl : true
 	};
+	// Touch properties
+	var touchstart = null;
+	var touchend = null;
 	// Default Public Properties
 	this.Map = null;
 	/* METHODS *****************************************************************/
@@ -49,17 +52,44 @@ function TkMap(Args)
 			MapOptions.zoom++;
 		}
 	};
+	this.touchStart =  function(e)
+	{
+		dragFlag = true;
+		touchstart = e.touches[0].pageY; 
+	};
+	this.touchEnd = function()
+	{
+		dragFlag = false;
+	};
+	this.touchMove = function(e)
+	{
+		if ( ! dragFlag) return;
+		touchend = e.touches[0].pageY;
+		window.scrollBy(0,(touchstart - touchend ));
+	};
 	this.setLock = function(lockBoolean)
 	{
 		var dblclick;
-		if(lockBoolean){dblclick = false;}else{dblclick = true;}
+		if(lockBoolean)
+		{
+			dblclick = false;
+			document.getElementById(DomId).removeEventListener("touchstart", this.touchStart, true);
+			document.getElementById(DomId).removeEventListener("touchend", this.touchEnd, true);
+			document.getElementById(DomId).removeEventListener("touchmove", this.touchMove, true);
+		}
+		else
+		{
+			dblclick = true;
+			document.getElementById(DomId).addEventListener("touchstart", this.touchStart, true);
+			document.getElementById(DomId).addEventListener("touchend", this.touchEnd, true);
+			document.getElementById(DomId).addEventListener("touchmove", this.touchMove, true);
+		}
 		this.Map.setOptions({
 			draggable : lockBoolean,
 			zoomControl : lockBoolean,
 			disableDoubleClickZoom : dblclick,
 			scrollwheel : lockBoolean,
-			keyboardShortcuts : lockBoolean,
-			disableDefaultUI : dblclick
+			keyboardShortcuts : lockBoolean
 		});
 	};
 	this.setCustomStyles = function(options)
