@@ -57,12 +57,12 @@ $(document).ready(function() {
 	if (Modernizr.touch)
 	{
 		$('#maplock').prop('checked', false);
-		Map.setLock(false);
+		Map.setTouchPanZoom(false);
 	}
 	else
 	{
 		$('#maplock').prop('checked', true);
-		Map.setLock(true);
+		Map.setTouchPanZoom(true);
 	}
 	var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 	directionsDisplay.setMap(Map.Map);
@@ -102,9 +102,9 @@ $(document).ready(function() {
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
-			Map.setLock(true);
+			Map.setTouchPanZoom(true);
 		} else {
-			Map.setLock(false);
+			Map.setTouchPanZoom(false);
 		}
 	});
 	// Routing listener
