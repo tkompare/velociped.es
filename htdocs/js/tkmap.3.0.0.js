@@ -184,10 +184,13 @@ function TkMap(Args)
 			);
 		}
 	};
-	/** Set more map options */
+	/** Set more map options before map initializaton */
 	this.setMapOptions = function(options)
 	{
-		$.extend(MapOptions,options);
+		if(this.Map !== null)
+		{
+			$.extend(MapOptions,options);
+		}
 	};
 	/**
 	 * Set the listeners for touch-scrolling the screen on the map.
