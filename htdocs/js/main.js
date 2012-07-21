@@ -5,12 +5,6 @@ $(document).ready(function() {
 	var allsteps = new Array();
 	var RackMarkers = [];
 	var RackInfoBox = [];
-	var homeControlDiv = null;
-	// Touch events defaults
-	var dragFlag = false;
-	var touchstartvar = 0;
-	var touchendvar = 0;
-
 	var RackInfoBoxViz = {
 			open : function(map,marker,box)
 			{
@@ -27,49 +21,36 @@ $(document).ready(function() {
 	var directionsService = new google.maps.DirectionsService();
 	// Make the map.
 	var Map = new TkMap({
+		domid:'map',
+		init:true,
 		lat:41.882103,
 		lng:-87.627793,
-		domid:'map',
-		init:false
+		responsive:true,
+		styles:'grey'
 	});
 	// Check for touch events
-	var rendererOptions;
-	if (Modernizr.touch)
-	{
-		rendererOptions = {};
-		Map.setMapOptions({
-			disableDoubleClickZoom : true,
-			scrollwheel : false,
-			zoomControlOptions : {
-				style : google.maps.ZoomControlStyle.SMALL,
-				position : google.maps.ControlPosition.LEFT_TOP
-			}
-		});
-	}
-	else
-	{
-		rendererOptions = {
-			draggable: true,
-			suppressInfoWindows: true
-		};
-	}
-	Map.initMap();
+	var rendererOptions = {};
 	if (Modernizr.touch)
 	{
 		$('#maplock').prop('checked', false);
-		Map.setTouchPanZoom(false);
+		Map.setPanZoom(false);
+		Map.setTouchScroll(true);
 	}
 	else
 	{
 		$('#maplock').prop('checked', true);
-		Map.setTouchPanZoom(true);
+		Map.setPanZoom(true);
+		Map.setTouchScroll(false);
+		rendererOptions = {
+				draggable: true,
+				suppressInfoWindows: true
+			};
 	}
 	var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 	directionsDisplay.setMap(Map.Map);
 	// Add Google Bicycle Layer
 	var GoogleBikeLayer = new google.maps.BicyclingLayer();
 	GoogleBikeLayer.setMap(Map.Map);
-	Map.setCustomStyles({styles:'grey'});
 	// Add City Bike layer
 	var CityBikeLayer = new TkMapFusionLayer({
 		geo:'geometry',
@@ -102,9 +83,11 @@ $(document).ready(function() {
 	// Add map lock listener
 	$('#maplock').click(function(){
 		if ($("#maplock").is(':checked')) {
-			Map.setTouchPanZoom(true);
+			Map.setPanZoom(true);
+			Map.setTouchScroll(false);
 		} else {
-			Map.setTouchPanZoom(false);
+			Map.setPanZoom(false);
+			Map.setTouchScroll(true);
 		}
 	});
 	// Routing listener

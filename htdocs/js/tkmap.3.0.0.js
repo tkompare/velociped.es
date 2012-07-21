@@ -24,6 +24,10 @@ function TkMap(Args)
 	var Zoom = typeof Args.zoom !== 'undefined' ? Args.zoom : 15;
 	/** Show the map as soom as this map object is created */
 	var Init = typeof Args.init !== 'undefined' ? Args.init : false;
+	/** Set map zoom level according to map DOM size */
+	var Responsive = typeof Args.responsive !== 'undefined' ? Args.responsive : false;
+	/** Set built-in custom map styles */
+	var Styles = typeof Args.styles !== 'undefined' ? Args.styles : null;
 	/*
 	 * Other PRIVATE Properties
 	 */
@@ -53,13 +57,6 @@ function TkMap(Args)
 	 */
 	/** The Google Map object */
 	this.Map = null;
-	/**
-	 * CODE TO RUN AT INSTANTIATION *********************************************
-	 */
-	if(Init === true)
-	{
-		this.initMap();
-	}
 	/* 
 	 * METHODS ****************************************************************
 	 */
@@ -84,6 +81,87 @@ function TkMap(Args)
 		touchend = e.touches[0].pageY;
 		window.scrollBy(0,(touchstart - touchend ));
 	};
+	/** Choose pre-built map styles. */
+	var setCustomStyles = function()
+	{
+		var StylesArray = Styles.split(' ');
+		for (i in StylesArray)
+		{
+			if(StylesArray[i] === 'satellite')
+			{
+				MapOptions.mapTypeId = google.maps.MapTypeId.SATELLITE;
+			}
+			else
+			{
+				if (StylesArray[i] === 'hybrid')
+				{
+					MapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
+				}
+				else if (StylesArray[i] === 'road')
+				{
+					MapOptions.mapTypeId = google.maps.MapTypeId.ROADMAP;
+				}
+				else if (StylesArray[i] === 'terrain')
+				{
+					MapOptions.mapTypeId = google.maps.MapTypeId.TERRAIN;
+				}
+				else if (StylesArray[i] === 'minlabels')
+				{
+					MapOptions.styles.push 
+					(
+						{
+							featureType : "all",
+							elementType : "labels",
+							stylers: [{ visibility: "off" }]
+						},
+						{
+							featureType : "administrative",
+							elementType : "labels",
+							stylers: [{ visibility: "on" }]
+						},
+						{
+							featureType : "road",
+							elementType : "labels",
+							stylers: [{ visibility: "on" }]
+						}
+					);
+				}
+				else if (StylesArray[i] === 'grey')
+				{
+					MapOptions.backgroundColor = '#C5C5C5';
+					MapOptions.styles.push 
+					(
+						{
+							stylers: [{ saturation: -99 }]
+						},
+						{
+							featureType: "road.arterial",
+							elementType: "geometry",
+							stylers: [{ lightness: 85 }]
+						},
+						{
+							featureType: "water",
+							stylers: [{ lightness: -40 }]
+						}
+					);
+				}
+			}
+		}
+	};
+	/** Set map zoom level based on the map's DOM object width */
+	var setResponsive = function()
+	{
+		/** The width of the map DOM object */
+		var theWidth = $("#"+DomId).width();
+		if(theWidth < 481)
+		{
+			MapOptions.zoom--;
+		}
+		else if (theWidth > 959)
+		{
+			MapOptions.zoom++;
+		}
+	};
 	/*
 	 * PUBLIC methods
 	 */
@@ -92,6 +170,14 @@ function TkMap(Args)
 	{
 		if (this.Map === null)
 		{
+			if (Styles !== null)
+			{
+				setCustomStyles();
+			}
+			if (Responsive)
+			{
+				setResponsive();
+			}
 			this.Map = new google.maps.Map(
 				document.getElementById(DomId),
 				MapOptions
@@ -103,40 +189,38 @@ function TkMap(Args)
 	{
 		$.extend(MapOptions,options);
 	};
-	/** Set map zoom level based on the map's DOM object width */
-	this.setResponsive = function()
+	/**
+	 * Set the listeners for touch-scrolling the screen on the map.
+	 * Generally used in conjunction with this.setPanZoom().
+	 */
+	this.setTouchScroll = function(TSBoolean)
 	{
-		/** The width of the map DOM object */
-		var theWidth = $("#"+DomId).width();
-		if(theWidth < 481)
+		if(TSBoolean)
 		{
-			MapOptions.zoom--;
+			document.getElementById(DomId).addEventListener("touchstart", touchStart, true);
+			document.getElementById(DomId).addEventListener("touchend", touchEnd, true);
+			document.getElementById(DomId).addEventListener("touchmove", touchMove, true);
 		}
-		else if (theWidth > 980)
+		else
 		{
-			MapOptions.zoom++;
+			document.getElementById(DomId).removeEventListener("touchstart", touchStart, true);
+			document.getElementById(DomId).removeEventListener("touchend", touchEnd, true);
+			document.getElementById(DomId).removeEventListener("touchmove", touchMove, true);
 		}
 	};
-	/** Turn on and off map's pan and zoom capabilities.
-	 * When off (FALSE), listen for touch events to allow for scrolling past map 
-	 * on touch devices.
+	/**
+	 * Turn on and off map's pan and zoom capabilities.
 	 */
-	this.setTouchPanZoom = function(PZBoolean)
+	this.setPanZoom = function(PZBoolean)
 	{
 		var dblclick;
 		if(PZBoolean)
 		{
 			dblclick = false;
-			document.getElementById(DomId).removeEventListener("touchstart", touchStart, true);
-			document.getElementById(DomId).removeEventListener("touchend", touchEnd, true);
-			document.getElementById(DomId).removeEventListener("touchmove", touchMove, true);
 		}
 		else
 		{
 			dblclick = true;
-			document.getElementById(DomId).addEventListener("touchstart", touchStart, true);
-			document.getElementById(DomId).addEventListener("touchend", touchEnd, true);
-			document.getElementById(DomId).addEventListener("touchmove", touchMove, true);
 		}
 		this.Map.setOptions({
 			disableDoubleClickZoom : dblclick,
@@ -146,74 +230,11 @@ function TkMap(Args)
 			zoomControl : PZBoolean
 		});
 	};
-	/** Choose a pre-built map styles. */
-	this.setCustomStyles = function(options)
+	/**
+	 * CODE TO RUN AT INSTANTIATION *********************************************
+	 */
+	if(Init === true)
 	{
-		if (options.styles !== 'undefined')
-		{
-			var Styles = options.styles.split(' ');
-			for (i in Styles)
-			{
-				if(Styles[i] === 'satellite')
-				{
-					MapOptions.mapTypeId = google.maps.MapTypeId.SATELLITE;
-				}
-				else
-				{
-					if (Styles[i] === 'hybrid')
-					{
-						MapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
-					}
-					else if (Styles[i] === 'road')
-					{
-						MapOptions.mapTypeId = google.maps.MapTypeId.ROADMAP;
-					}
-					else if (Styles[i] === 'terrain')
-					{
-						MapOptions.mapTypeId = google.maps.MapTypeId.TERRAIN;
-					}
-					else if (Styles[i] === 'minlabels')
-					{
-						MapOptions.styles.push 
-						(
-							{
-								featureType : "all",
-								elementType : "labels",
-								stylers: [{ visibility: "off" }]
-							},
-							{
-								featureType : "administrative",
-								elementType : "labels",
-								stylers: [{ visibility: "on" }]
-							},
-							{
-								featureType : "road",
-								elementType : "labels",
-								stylers: [{ visibility: "on" }]
-							}
-						);
-					}
-					else if (Styles[i] === 'grey')
-					{
-						MapOptions.backgroundColor = '#C5C5C5';
-						MapOptions.styles.push 
-						(
-							{
-								stylers: [{ saturation: -99 }]
-							},
-							{
-								featureType: "road.arterial",
-								elementType: "geometry",
-								stylers: [{ lightness: 85 }]
-							},
-							{
-								featureType: "water",
-								stylers: [{ lightness: -40 }]
-							}
-						);
-					}
-				}
-			}
-		}
-	};
+		this.initMap();
+	}
 };
