@@ -83,6 +83,15 @@
 									</div>
 								</div>
 							</div>
+							<div class="control-group">
+								<label class="control-label" for="place"><b>Look for along the route:</b></label>
+								<div class="controls">
+									<div class="input-append">
+										<input id="place" type="text" class="span9" placeholder="place of interest">
+										<button id="btn-place" class="btn btn-info" type="button">Clear</button>
+									</div>
+								</div>
+							</div>
 						</div>
 						<label for="destination"><b>Finish</b>
 							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
@@ -149,7 +158,10 @@
 							boxes. If your device is capable, you can click on the <b>GPS</b>
 							button to automatically enter your Start address. The <b>More</b>
 							button allows you to enter two stops along the way to your final
-							destination. Don't forget to click the <b>Route</b> button.</p>
+							destination, and also enter a place to <b>Look for along the
+							way</b>, such as a '<i>cafe</i>' or '<i>bike repair</i>'. We even
+							check the hours of operation on (via Google) to see if it is
+							currently open. Don't forget to click the <b>Route</b> button.</p>
 						<p><span class="label label-important">Tip:</span> Enter the same
 							address in the <b>Start</b> and <b>Finish</b> input boxes, click
 							<b>More</b>, then enter destinations in the <b>Stop #1</b> and
@@ -280,7 +292,7 @@
 		})();
 	</script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/tksocrataview.1.0.0.js"></script>
 	<script src="js/tkmap.4.0.0.js"></script>

@@ -203,12 +203,22 @@ function TkMap(Args)
 			document.getElementById(DomId).addEventListener("touchstart", touchStart, true);
 			document.getElementById(DomId).addEventListener("touchend", touchEnd, true);
 			document.getElementById(DomId).addEventListener("touchmove", touchMove, true);
+			this.Map.setOptions({
+				zoomControl : false
+			});
 		}
 		else
 		{
 			document.getElementById(DomId).removeEventListener("touchstart", touchStart, true);
 			document.getElementById(DomId).removeEventListener("touchend", touchEnd, true);
 			document.getElementById(DomId).removeEventListener("touchmove", touchMove, true);
+			this.Map.setOptions({
+				zoomControl: true,
+				zoomControlOptions: {
+					style : google.maps.ZoomControlStyle.SMALL,
+					position : google.maps.ControlPosition.LEFT_TOP
+				}
+			});
 		}
 	};
 	/**

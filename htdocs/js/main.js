@@ -15,6 +15,19 @@ $(document).ready(function() {
 					return function() { box.close(map,marker); };
 			}
 	};
+	var PlaceMarkers = [];
+	var PlaceInfoWindow = new google.maps.InfoWindow();
+	var PlaceInfoBox = [];
+	var PlaceInfoBoxViz = {
+			open : function(map,marker,box)
+			{
+					return function() { box.open(map,marker); };
+			},
+			close : function(map,marker,box)
+			{
+					return function() { box.close(map,marker); };
+			}
+	};
 	var MapBounds = null;
 	var StepLine = null; 
 	// The directions service
@@ -28,6 +41,7 @@ $(document).ready(function() {
 		responsive:true,
 		styles:'grey'
 	});
+	var PlaceService = new google.maps.places.PlacesService(Map.Map);
 	// Check for touch events
 	var rendererOptions = {};
 	if (Modernizr.touch)
@@ -155,6 +169,17 @@ $(document).ready(function() {
 					}
 				}
 				directionsDisplay.setDirections(response);
+				removePlaceMarkers();
+				if($('#place').val().length > 0)
+				{
+					console.log($('#place').val());
+					console.log(response.routes[0].bounds);
+					var PlaceRequest = {
+						bounds: response.routes[0].bounds,
+						query: $('#place').val()
+					};
+					PlaceService.textSearch(PlaceRequest, placeCallback);
+				}
 			}
 		});
 	});
@@ -223,6 +248,71 @@ $(document).ready(function() {
 		thisStep = 0;
 		setDirectionsText(directionsDisplay.directions);
 	});
+	// Places search callback
+	function placeCallback(results, status) {
+		removePlaceMarkers();
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+			for (var i = 0; i < results.length; i++) {
+				createPlaceMarker(results[i],i);
+			}
+		}
+	};
+	// Create Place Markers
+	function createPlaceMarker(place,i) {
+		var placeAddressArray = place.formatted_address.split(',');
+		PlaceMarkers[i] = new google.maps.Marker({
+		map: Map.Map,
+		position: place.geometry.location
+		});
+		var isOpenText = '';
+		var isOpen = typeof place.opening_hours !== 'undefined' ? place.opening_hours.open_now : null;
+		var PlaceInfoBoxText = null;
+		if(isOpen)
+		{
+			isOpenText = ' (Open)';
+		}
+		else if(isOpen === false)
+		{
+			isOpenText = ' (Closed)';
+		}
+		PlaceInfoBoxText = '<div id="placeinfobox'+i+'" class="placeInfoBox" style="border:3px solid rgb(0,128,128); margin-top:8px; background:rgb(247,247,247); padding:5px; font-size:85%;">'+
+			place.name+isOpenText+'<br>'+placeAddressArray[0]+'</div>';
+		console.log(PlaceInfoBoxText);
+		InfoBoxOptions = {
+			content: PlaceInfoBoxText
+			,disableAutoPan: false
+			,maxWidth: 0
+			,pixelOffset: new google.maps.Size(-84, 0)
+			,zIndex: 10000
+			,boxStyle: { 
+				background: "url('img/tipbox.gif') no-repeat"
+				,opacity: 0.95
+				,width: "160px"
+			}
+			,closeBoxMargin: "13px 5px 5px 5px"
+			,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+			,infoBoxClearance: new google.maps.Size(1, 1)
+			,isHidden: false
+			,pane: "floatPane"
+			,enableEventPropagation: false
+		};
+		PlaceInfoBox[i] = new InfoBox(InfoBoxOptions);
+		// MapBounds.extend(PlaceLatLng[i]);
+		// Map.Map.fitBounds(MapBounds);
+		google.maps.event.addListener(PlaceMarkers[i], 'click', PlaceInfoBoxViz.open(Map.Map,PlaceMarkers[i],PlaceInfoBox[i]));
+	}
+	// Remove Place Markers
+	function removePlaceMarkers() {
+		if(PlaceMarkers.length > 0)
+		{
+			for(var x in PlaceMarkers)
+			{
+				google.maps.event.clearInstanceListeners(PlaceMarkers[x]);
+				PlaceMarkers[x].setMap(null);
+			}
+			PlaceMarkers = [];
+		}
+	}
 	// btn-dir-start listener
 	$('#btn-dir-start').click(function(){
 		thisStep = 0;
@@ -406,17 +496,10 @@ $(document).ready(function() {
 	$('#btn-stop2').click(function(){
 		$('#stop2').val('');
 	});
-	// Window size check
-//	if($(window).width() > 767)
-//	{
-//		$('#maplock').prop('checked', true);
-//		Map.setLock(true);
-//	}
-//	else
-//	{
-//		$('#maplock').prop('checked', false);
-//		Map.setLock(false);
-//	}
+	// Place clear button
+	$('#btn-place').click(function(){
+		$('#place').val('');
+	});
 	// Geolocation
 	$('#gps').click(function(){
 		if(navigator.geolocation)
