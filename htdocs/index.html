@@ -59,7 +59,8 @@
 						<label class="control-label" for="origin"><b>Start</b></label>
 							<div class="controls">
 								<div class="input-append">
-									<input id="origin" type="text" class="span9" placeholder="123 W Street Name">
+									<input id="origin" type="text" class="span7" placeholder="123 W Street Name" />
+									<button id="btn-origin" class="btn btn-inverse" type="button">Map</button>
 									<button id="gps" class="btn btn-inverse" type="button">GPS</button>
 								</div>
 							</div>
@@ -69,7 +70,8 @@
 								<label class="control-label" for="stop1"><b>Stop #1</b></label>
 								<div class="controls">
 									<div class="input-append">
-										<input id="stop1" type="text" class="span9" placeholder="enter 1st stop here">
+										<input id="stop1" type="text" class="span7" placeholder="enter 1st stop here">
+										<button id="btn-stop1" class="btn btn-inverse" type="button">Map</button>
 										<button id="btn-stop1" class="btn btn-info" type="button">Clear</button>
 									</div>
 								</div>
@@ -78,7 +80,8 @@
 								<label class="control-label" for="stop2"><b>Stop #2</b></label>
 								<div class="controls">
 									<div class="input-append">
-										<input id="stop2" type="text" class="span9" placeholder="enter 2nd stop here">
+										<input id="stop2" type="text" class="span7" placeholder="enter 2nd stop here">
+										<button id="btn-stop2" class="btn btn-inverse" type="button">Map</button>
 										<button id="btn-stop2" class="btn btn-info" type="button">Clear</button>
 									</div>
 								</div>
@@ -87,15 +90,21 @@
 								<label class="control-label" for="place"><b>Look for along the route:</b></label>
 								<div class="controls">
 									<div class="input-append">
-										<input id="place" type="text" class="span9" placeholder="place of interest">
+										<input id="place" type="text" class="span7" placeholder="place of interest">
 										<button id="btn-place" class="btn btn-info" type="button">Clear</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<label for="destination"><b>Finish</b>
-							<input id="destination" type="text" class="span9" placeholder="Wrigley Building">
-						</label>
+						<div class="control-group">
+							<label class="control-label" for="destination"><b>Finish</b></label>
+							<div class="controls">
+								<div class="input-append">
+									<input id="destination" type="text" class="span7" placeholder="Wrigley Building">
+									<button id="btn-destination" class="btn btn-inverse" type="button">Map</button>
+								</div>
+							</div>
+						</div>
 						<div>
 						<button id="route" class="btn btn-primary">Route</button>
 						<button id="show-directions" class="btn hide">Show Directions</button>
@@ -161,12 +170,16 @@
 							destination, and also enter a place to <b>Look for along the
 							way</b>, such as a '<i>cafe</i>' or '<i>bike repair</i>'. We even
 							check the hours of operation on (via Google) to see if it is
-							currently open. Don't forget to click the <b>Route</b> button.</p>
-						<p><span class="label label-important">Tip:</span> Enter the same
+							currently open. Don't forget to click the <b>Route</b> button.<br>
+							<span class="label label-important">Tip:</span> Enter the same
 							address in the <b>Start</b> and <b>Finish</b> input boxes, click
 							<b>More</b>, then enter destinations in the <b>Stop #1</b> and
 							<b>Stop #2</b> input boxes to create a circular route for a
 							fitness ride.</p>
+						<h4>Click/Touch Routing</h4>
+						<p>Click on the <b>Map</b> buttons next to the <b>Start</b>,
+							<b>Stop #1</b>, <b>Stop #2</b>, or <b>Finish</b> input boxes, then
+							click on the map to fill them in.</p>
 						<h4>Rerouting</h4>
 						<p>On non-touch devices, such as laptops and desktops, you may
 							customize your route by dragging and dropping the route line on
@@ -298,5 +311,11 @@
 	<script src="js/touchtest.min.js"></script>
 	<script src="js/infobox.min.js"></script>
 	<script src="js/library.js"></script>
+<!--
+	<script src="js/tkmap.4.0.0.js"></script>
+	<script src="js/tksocrataview.1.0.0.js"></script>
+	<script src="js/tkmapfusionlayer.3.0.0.js"></script>
+	<script src="js/main.js"></script>
+-->
 </body>
 </html>
