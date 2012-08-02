@@ -27,6 +27,8 @@
 		#map img {
 			max-width: none;
 		}
+		.blue {color:#3a87ad;}
+		.red {color:#b94a48;}
 		@media only screen and (max-width:767px){
 			.vis-phone { display:none; }
 		}
@@ -60,7 +62,7 @@
 							<div class="controls">
 								<div class="input-append">
 									<input id="origin" type="text" class="span7" placeholder="123 W Street Name" />
-									<button id="btn-origin" class="btn btn-inverse" type="button">Map</button>
+									<button id="btn-map-origin" class="btn btn-inverse btn-map" type="button">Map</button>
 									<button id="gps" class="btn btn-inverse" type="button">GPS</button>
 								</div>
 							</div>
@@ -71,8 +73,8 @@
 								<div class="controls">
 									<div class="input-append">
 										<input id="stop1" type="text" class="span7" placeholder="enter 1st stop here">
-										<button id="btn-stop1" class="btn btn-inverse" type="button">Map</button>
-										<button id="btn-stop1" class="btn btn-info" type="button">Clear</button>
+										<button id="btn-map-stop1" class="btn btn-inverse btn-map" type="button">Map</button>
+										<button id="btn-clr-stop1" class="btn btn-success btn-clr" type="button">Clear</button>
 									</div>
 								</div>
 							</div>
@@ -81,8 +83,8 @@
 								<div class="controls">
 									<div class="input-append">
 										<input id="stop2" type="text" class="span7" placeholder="enter 2nd stop here">
-										<button id="btn-stop2" class="btn btn-inverse" type="button">Map</button>
-										<button id="btn-stop2" class="btn btn-info" type="button">Clear</button>
+										<button id="btn-map-stop2" class="btn btn-inverse btn-map" type="button">Map</button>
+										<button id="btn-clr-stop2" class="btn btn-success btn-clr" type="button">Clear</button>
 									</div>
 								</div>
 							</div>
@@ -91,7 +93,7 @@
 								<div class="controls">
 									<div class="input-append">
 										<input id="place" type="text" class="span7" placeholder="place of interest">
-										<button id="btn-place" class="btn btn-info" type="button">Clear</button>
+										<button id="btn-clr-place" class="btn btn-success btn-clr" type="button">Clear</button>
 									</div>
 								</div>
 							</div>
@@ -101,7 +103,7 @@
 							<div class="controls">
 								<div class="input-append">
 									<input id="destination" type="text" class="span7" placeholder="Wrigley Building">
-									<button id="btn-destination" class="btn btn-inverse" type="button">Map</button>
+									<button id="btn-map-destination" class="btn btn-inverse btn-map" type="button">Map</button>
 								</div>
 							</div>
 						</div>
@@ -111,7 +113,18 @@
 						<button id="btn-more" class="btn">More</button>
 						</div>
 						<div style="padding-top:10px;">
-							<input id="transit" type="checkbox"> Use Public Transportation
+							<input id="transit" type="checkbox"> Use Public Transportation&nbsp;&nbsp;
+							<a id="modal-btn" class="btn btn-mini hide" data-toggle="modal" href="#modal-dir" >All Directions</a>
+							<div class="modal fade hide" id="modal-dir">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									<h3>Directions</h3>
+								</div>
+								<div class="modal-body" id="modal-body"></div>
+								<div class="modal-footer">
+									<button class="btn btn-success" data-dismiss="modal">Close</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -121,14 +134,12 @@
 				<strong>Notice:</strong> <span id="gpsfail">GPS locating failed</span>
 			</div>
 			<div id="alert-directions" class="well hide">
-				<div id="btn-dir" class="row-fluid">
-					<button id="btn-dir-start"class="btn btn-primary">Start</button>
-					<button id="btn-dir-back" class="btn btn-info"><i class="icon-backward icon-white"></i> Back</button>
-					<button id="btn-dir-forward" class="btn btn-info">Next <i class="icon-forward icon-white"></i></button>
-					<button id="btn-dir-end" class="btn btn-primary">End</button>
-				</div>
+					<button id="btn-dir-start"class="btn btn-inverse">Start</button>
+					<button id="btn-dir-back" class="btn"><i class="icon-backward"></i> Back</button>
+					<button id="btn-dir-forward" class="btn">Next <i class="icon-forward"></i></button>
+					<button id="btn-dir-end" class="btn btn-inverse">End</button>
 				<div><br></div>
-				<div id="directions" class="well alert-info"><span id="directions-text"></span></div>
+				<p id="directions"><span id="directions-text" class="blue"></span></p>
 			</div>
 		</div>
 		<div class="span8">
@@ -144,7 +155,7 @@
 	<div class="row-fluid">
 		<div class="span12 padded">
 			<div>
-				<button id="btn-help" class="btn btn-info">Help</button>
+				<button id="btn-help" class="btn btn-success">Help</button>
 			</div>
 			<div id="div-help" class="well hide">
 				<h3>Welcome</h3>
@@ -188,11 +199,16 @@
 							experience.</p>
 						<h4>Public Transportation</h4>
 						<p>Checking the <b>Use Public Transportation</b> checkbox we will
-						route you with Google's transit routing. Unfortunately, it may route
-						you the wrong way down one way streets. So please be aware of these
-						occurances and adjust accordingly. Routes are calculated as if you
-						were departing from the <b>Start</b> location immediately.</p>
+							route you with Google's transit routing. Unfortunately, it may
+							route you the wrong way down one way streets. So please be aware
+							of these occurances and adjust accordingly. Routes are calculated
+							as if you were departing from the <b>Start</b> location
+							immediately.</p>
 						<h4>Directions</h4>
+						<p>After clicking the <b>Route</b> button, use the <b>All
+							Directions</b> button to show an overlay with all directions from
+							<b>Start</b> to <b>Finish</b>.
+						<h4>Turn-By-Turn Directions</h4>
 						<p>After clicking the <b>Route</b> button, use the <b>Hide/Show
 							Directions</b> button to expose turn-by-turn directions. Your 
 							chosen route's total distance is initially displayed in the
@@ -278,7 +294,7 @@
 						<p>Tom hopes you love Velociped.es as much as he loves creating
 						it. <a href="http://twitter.com/tomkompare">Let him know.</a></p>
 					</div>
-					<button id="btn-close-help" class="btn btn-info">Close Help</button>
+					<button id="btn-close-help" class="btn btn-success">Close Help</button>
 				</div>
 			</div>
 			<hr />
