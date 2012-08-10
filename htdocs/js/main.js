@@ -30,6 +30,7 @@ $(document).ready(function() {
 	var MapBounds = null;
 	var StepLine = null; 
 	// The directions service
+	var TheDirections = null;
 	var directionsService = new google.maps.DirectionsService();
 	// Make the map.
 	var Map = new TkMap({
@@ -162,6 +163,8 @@ $(document).ready(function() {
 		}
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
+				TheDirections = response;
+				console.log(response.routes[0]);
 				for (var leg in response.routes[0].legs)
 				{
 					for(var x in response.routes[0].legs[leg].steps)
@@ -200,6 +203,7 @@ $(document).ready(function() {
 		{
 			l++;
 			var s = 0;
+			$('#modal-save-btn').removeClass('hide');
 			$('#modal-btn').removeClass('hide');
 			$('#modal-body').text('');
 			for(var x in response.routes[0].legs[leg].steps)
@@ -253,6 +257,7 @@ $(document).ready(function() {
 	// Directions Change listener
 	google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
 		thisStep = 0;
+		TheDirections = directionsDisplay.directions.routes[0];
 		setDirectionsText(directionsDisplay.directions);
 	});
 	// Places search callback
@@ -349,6 +354,45 @@ $(document).ready(function() {
 		showDirections();
 		showBikeRacks(allsteps[thisStep].latlngEnd);
 	});
+	$('#modal-save-btn').click(function(){
+		if(TheDirections !== null)
+		{
+			var numsteps = TheDirections.legs[0].steps.length;
+			var latlngs = '';
+			for(var s=0; s<numsteps; s++)
+			{
+				if(s != 0)
+				{
+					latlngs = latlngs+'||';
+				}
+				var numpaths = TheDirections.legs[0].steps[s].path.length;
+				for(var p=0; p<numpaths; p++)
+				{
+					if(p != 0)
+					{
+						latlngs = latlngs+'|';
+					}
+					latlngs = latlngs+TheDirections.legs[0].steps[s].path[p].lat()+','+TheDirections.legs[0].steps[s].path[p].lng();
+				}
+			}
+			console.log(latlngs);
+			$.post('route.php', { latlngs: latlngs }, function(data){
+				$('#modal-save-body').html('');
+				if(isNumber(data))
+				{
+					$('#modal-save-body').append('<p>Retrieve your route at:<br><h4><a href="http://velociped.es/?r='+data+'">http://velociped.es/?r='+data+'</a></h4></p>');
+				}
+				else
+				{
+					$('#modal-save-body').append('<p>Sorry! Something went wrong with saving your route. If this continues, please send <b>tom@kompare.us</b> a friendly note.');
+				}
+			}, 'json');
+		}
+	});
+	function isNumber(n) {
+	  return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
 	function resetMapStep()
 	{
 		MapBounds = new google.maps.LatLngBounds();
@@ -368,6 +412,7 @@ $(document).ready(function() {
 		});
 		StepLine.setMap(Map.Map);
 	}
+	// Show directions function
 	function showDirections()
 	{
 		$('#directions-text').fadeOut(function(){
